@@ -18,7 +18,7 @@ StudentWorld::StudentWorld(string assetPath)
 
 int StudentWorld::init()
 {
-    int a = 11;
+    int a = 1;
     return GWSTATUS_CONTINUE_GAME;
 }
 
