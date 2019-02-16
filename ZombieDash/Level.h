@@ -10,52 +10,52 @@
 class Level
 {
 public:
-
+    
     enum MazeEntry {
         empty, player, dumb_zombie, smart_zombie, citizen, wall, exit, pit,
         vaccine_goodie, gas_can_goodie, landmine_goodie
     };
-
+    
     enum LoadResult {
         load_success, load_fail_file_not_found, load_fail_bad_format
     };
-
+    
     Level(std::string assetPath)
-     : m_assetPath(assetPath)
+    : m_assetPath(assetPath)
     {
         for (int y = 0; y < LEVEL_HEIGHT; y++)
             for (int x = 0; x < LEVEL_WIDTH; x++)
                 m_maze[y][x] = empty;
     }
-
+    
     LoadResult loadLevel(std::string filename)
     {
         std::ifstream levelFile((m_assetPath + filename).c_str());
         if (!levelFile)
             return load_fail_file_not_found;
-
-          // get the maze
-
+        
+        // get the maze
+        
         std::string line;
         bool foundExit = false;
         bool foundPlayer = false;
-
+        
         for (int y = LEVEL_HEIGHT-1; std::getline(levelFile, line); y--)
         {
             if (y < 0)    // too many maze lines?
             {
                 if (line.find_first_not_of(" \t\r") != std::string::npos)
                     return load_fail_bad_format;  // non-blank line
-
+                
                 char dummy;
                 if (levelFile >> dummy)     // non-blank rest of file
                     return load_fail_bad_format;
                 break;
             }
-
+            
             if (line.size() < LEVEL_WIDTH  ||  line.find_first_not_of(" \t\r", LEVEL_WIDTH) != std::string::npos)
                 return load_fail_bad_format;
-                
+            
             for (int x = 0; x < LEVEL_WIDTH; x++)
             {
                 MazeEntry& me = m_maze[y][x];
@@ -76,22 +76,22 @@ public:
                 }
             }
         }
-
+        
         if (!foundExit  ||  !foundPlayer  ||  !edgesValid())
             return load_fail_bad_format;
-
+        
         return load_success;
     }
-
+    
     MazeEntry getContentsOf(int x, int y) const
     {
         return (x >= 0 && x < LEVEL_WIDTH && y >= 0 && y < LEVEL_HEIGHT) ? m_maze[y][x] : empty;
     }
-
+    
 private:
     MazeEntry   m_maze[LEVEL_HEIGHT][LEVEL_WIDTH];
     std::string m_assetPath;
-
+    
     bool edgesValid() const
     {
         for (int y = 0; y < LEVEL_HEIGHT; y++)
@@ -100,7 +100,7 @@ private:
         for (int x = 0; x < LEVEL_WIDTH; x++)
             if (m_maze[0][x] != wall || m_maze[LEVEL_HEIGHT-1][x] != wall)
                 return false;
-
+        
         return true;
     }
 };

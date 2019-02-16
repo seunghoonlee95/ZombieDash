@@ -6,35 +6,6 @@
 	<integer>9</integer>
 	<key>logs</key>
 	<dict>
-		<key>9A951CF9-5FDE-4BD1-9B2A-BA8C4BBEEEC2</key>
-		<dict>
-			<key>className</key>
-			<string>DBGConsoleLog</string>
-			<key>documentTypeString</key>
-			<string>com.apple.dt.IDE.DebuggerLogContentType</string>
-			<key>domainType</key>
-			<string>Xcode.IDEActivityLogDomainType.DebugLog</string>
-			<key>fileName</key>
-			<string>9A951CF9-5FDE-4BD1-9B2A-BA8C4BBEEEC2.xcactivitylog</string>
-			<key>highLevelStatus</key>
-			<string>S</string>
-			<key>schemeIdentifier-containerName</key>
-			<string>ZombieDash project</string>
-			<key>schemeIdentifier-schemeName</key>
-			<string>ZombieDash</string>
-			<key>schemeIdentifier-sharedScheme</key>
-			<integer>1</integer>
-			<key>signature</key>
-			<string>Debug ZombieDash</string>
-			<key>timeStartedRecording</key>
-			<real>571994900.38573802</real>
-			<key>timeStoppedRecording</key>
-			<real>571994916.73687899</real>
-			<key>title</key>
-			<string>Debug ZombieDash</string>
-			<key>uniqueIdentifier</key>
-			<string>9A951CF9-5FDE-4BD1-9B2A-BA8C4BBEEEC2</string>
-		</dict>
 		<key>D4FDAD49-3A18-469B-B780-3F2AC66C431E</key>
 		<dict>
 			<key>className</key>
@@ -64,7 +35,7 @@
 			<key>uniqueIdentifier</key>
 			<string>D4FDAD49-3A18-469B-B780-3F2AC66C431E</string>
 		</dict>
-		<key>E5A821AB-1955-4EB3-BDF0-75EF532D2E07</key>
+		<key>EABDEAC5-E2C2-4F05-94D7-C50CA1A9E5A0</key>
 		<dict>
 			<key>className</key>
 			<string>DBGConsoleLog</string>
@@ -73,7 +44,7 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.DebugLog</string>
 			<key>fileName</key>
-			<string>E5A821AB-1955-4EB3-BDF0-75EF532D2E07.xcactivitylog</string>
+			<string>EABDEAC5-E2C2-4F05-94D7-C50CA1A9E5A0.xcactivitylog</string>
 			<key>highLevelStatus</key>
 			<string>S</string>
 			<key>schemeIdentifier-containerName</key>
@@ -85,13 +56,13 @@
 			<key>signature</key>
 			<string>Debug ZombieDash</string>
 			<key>timeStartedRecording</key>
-			<real>571969975.70682395</real>
+			<real>572033338.30718303</real>
 			<key>timeStoppedRecording</key>
-			<real>571969977.31008303</real>
+			<real>572033346.25539804</real>
 			<key>title</key>
 			<string>Debug ZombieDash</string>
 			<key>uniqueIdentifier</key>
-			<string>E5A821AB-1955-4EB3-BDF0-75EF532D2E07</string>
+			<string>EABDEAC5-E2C2-4F05-94D7-C50CA1A9E5A0</string>
 		</dict>
 	</dict>
 </dict>
