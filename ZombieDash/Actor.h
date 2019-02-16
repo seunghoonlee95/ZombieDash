@@ -29,65 +29,66 @@ public:
     
 };
 
-class Exit : Actor{
-public:
-    Exit();
-    void doSomething();
-    
-};
-
-class Pit : Actor{
-public:
-    Pit();
-    void doSomething();
-    
-};
-
-class Flame : Actor{
-public:
-    Flame();
-    void doSomething();
-    
-};
-
-class Vomit : Actor{
-public:
-    Vomit();
-    void doSomething();
-    
-};
-
-class VaccineGoodie : Actor{
-public:
-    VaccineGoodie();
-    void doSomething();
-    
-};
-
-class GasCanGoodie : Actor{
-public:
-    GasCanGoodie();
-    void doSomething();
-    
-};
-
-class LandmineGoodie : Actor{
-public:
-    LandmineGoodie();
-    void doSomething();
-    
-};
-
-class Landmine : Actor{
-public:
-    Landmine();
-    void doSomething();
-    
-};
-
-
-
-
-
+//Comment out these for now.
+//class Exit : Actor{
+//public:
+//    Exit();
+//    void doSomething();
+//
+//};
+//
+//class Pit : Actor{
+//public:
+//    Pit();
+//    void doSomething();
+//
+//};
+//
+//class Flame : Actor{
+//public:
+//    Flame();
+//    void doSomething();
+//
+//};
+//
+//class Vomit : Actor{
+//public:
+//    Vomit();
+//    void doSomething();
+//
+//};
+//
+//class VaccineGoodie : Actor{
+//public:
+//    VaccineGoodie();
+//    void doSomething();
+//
+//};
+//
+//class GasCanGoodie : Actor{
+//public:
+//    GasCanGoodie();
+//    void doSomething();
+//
+//};
+//
+//class LandmineGoodie : Actor{
+//public:
+//    LandmineGoodie();
+//    void doSomething();
+//
+//};
+//
+//class Landmine : Actor{
+//public:
+//    Landmine();
+//    void doSomething();
+//
+//};
+//
+//
+//
+//
+//
 
 #endif // ACTOR_H_
