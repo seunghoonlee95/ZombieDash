@@ -1,6 +1,8 @@
 #include "StudentWorld.h"
 #include "GameConstants.h"
 #include <string>
+#include <vector>
+
 using namespace std;
 
 GameWorld* createStudentWorld(string assetPath)
@@ -17,7 +19,8 @@ StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 
 int StudentWorld::init()
 {
-    int a = 111;
+
+    
     return GWSTATUS_CONTINUE_GAME;
 }
 

@@ -11,8 +11,10 @@ public:
     //Simple Constructor
     Actor(/*Add parameters here too!*/) : GraphObject(1, 2, 3, 4, 5, 6){
     }
-    virtual void doSomething();
+//    virtual void doSomething();
     
+private:
+    virtual void doSomething();
 };
 
 class Penelope : Actor{
@@ -26,7 +28,7 @@ class Wall : Actor{
 public:
     Wall();
     void doSomething();
-    
+  
 };
 
 //Comment out these for now.
