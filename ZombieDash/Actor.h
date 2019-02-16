@@ -58,6 +58,9 @@ public:
 //
 //};
 //
+
+
+// Make a Goodie class and derive classes(VaccineGoodie, GasCanGoodie, LandmineGoodie...)
 //class VaccineGoodie : Actor{
 //public:
 //    VaccineGoodie();
