@@ -14,6 +14,7 @@ class StudentWorld : public GameWorld
 {
 public:
     StudentWorld(std::string assetPath);
+    StudentWorld(); // I just made this default constructor up..
     virtual int init();
     virtual int move();
     virtual void cleanUp();

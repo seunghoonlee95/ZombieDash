@@ -2,6 +2,8 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
+#include "SoundFX.h"
+#include "StudentWorld.h"
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
@@ -9,9 +11,15 @@
 class Actor : GraphObject{
 public:
     //Simple Constructor
-    Actor(/*Add parameters here too!*/) : GraphObject(1, 2, 3, 4, 5, 6){
+    Actor(int imageID, double startX, double startY, Direction dir, int depth, double size) : GraphObject(imageID, startX, startY, dir, depth, size){
+        
     }
-//    virtual void doSomething();
+    
+    StudentWorld* getWorld(){
+        StudentWorld* ptr = new StudentWorld();
+        return ptr;
+    }
+    
     
 private:
     virtual void doSomething();
@@ -19,14 +27,41 @@ private:
 
 class Penelope : Actor{
 public:
-    Penelope();
-    void doSomething();
+    Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size)
+    :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(0), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
+    //Why can't I do m_direction(right)?? right is a public variable of parent class..!!!
+    {
+        
+    }
+    void doSomething(){
+        if(m_isAlive == false){//check to see if she is still alive
+            return;
+        }
+        if(m_isInfected){
+            m_infectionCount++;
+            if(m_infectionCount == 500){
+                m_isAlive = false;
+                //playClip(SOUND_PLAYER_FIRE);
+            }
+        }
+        
+    }
+    
+private:
+    bool m_isAlive;
+    Direction m_direction;
+    int m_depth;
+    bool m_hasLandmines;
+    int m_flameThrowerCharges;
+    bool m_hasVaccine;
+    bool m_isInfected;
+    int m_infectionCount;
     
 };
 
 class Wall : Actor{
 public:
-    Wall();
+    Wall(int imageID, double startX, double startY, Direction dir, int depth, double size);
     void doSomething();
   
 };
