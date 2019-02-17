@@ -42,3 +42,17 @@ void StudentWorld::cleanUp()
 {
     
 }
+
+bool StudentWorld::doesIntersect(int x, int y){
+    vector<Actor*>::iterator it = actorList.begin();
+    while(it != actorList.end()){
+        if(it->getX() ){
+            
+        }
+        
+        it++;
+    }
+    
+    
+    return false;
+}

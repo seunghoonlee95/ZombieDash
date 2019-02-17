@@ -54,6 +54,7 @@ int main(int argc, char* argv[])
     }
 
     GameWorld* gw = createStudentWorld(assetPath);
+    
     //Uncommnet this to actually run the game!!
-    //Game().run(argc, argv, gw, "Zombie Dash");
+//    Game().run(argc, argv, gw, "Zombie Dash");
 }

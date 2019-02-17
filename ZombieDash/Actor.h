@@ -7,7 +7,7 @@
 
 class StudentWorld;
 
-class Actor : GraphObject{
+class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(int imageID, double startX, double startY, Direction dir, int depth, double size);/*: GraphObject(imageID, startX, startY, dir, depth, size){
@@ -28,8 +28,7 @@ private:
 class Penelope : Actor{
 public:
     Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(0), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
-    //Why can't I do m_direction(right)?? right is a public variable of parent class..!!!
+    :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
     {
         
     }

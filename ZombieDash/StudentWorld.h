@@ -4,9 +4,8 @@
 #include "GameWorld.h"
 #include <string>
 #include <vector>
-//#include "Actor.h"
-
 using namespace std;
+
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
 
@@ -20,10 +19,11 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-   // *StudentWorld
+    bool doesIntersect(int x, int y);
+    bool doesOverlap(int x, int y);
 
 private:
-   // vector<*Actor> actorList;
+    vector<Actor*> actorList;
 };
 
 #endif // STUDENTWORLD_H_
