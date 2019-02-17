@@ -4,11 +4,13 @@
 #include "GameWorld.h"
 #include <string>
 #include <vector>
-#include "Actor.h"
+//#include "Actor.h"
 
 using namespace std;
 
 // Students:  Add code to this file, StudentWorld.cpp, Actor.h, and Actor.cpp
+
+class Actor;
 
 class StudentWorld : public GameWorld
 {
@@ -18,6 +20,7 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
+   // *StudentWorld
 
 private:
    // vector<*Actor> actorList;

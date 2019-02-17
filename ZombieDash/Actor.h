@@ -2,27 +2,27 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
-#include "SoundFX.h"
-#include "StudentWorld.h"
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
-//
+class StudentWorld;
+
 class Actor : GraphObject{
 public:
     //Simple Constructor
-    Actor(int imageID, double startX, double startY, Direction dir, int depth, double size) : GraphObject(imageID, startX, startY, dir, depth, size){
-        
+    Actor(int imageID, double startX, double startY, Direction dir, int depth, double size);/*: GraphObject(imageID, startX, startY, dir, depth, size){
+    }*/
+    
+    virtual ~Actor(){
+        delete m_stdPtr;
     }
     
-    StudentWorld* getWorld(){
-        StudentWorld* ptr = new StudentWorld();
-        return ptr;
-    }
+    StudentWorld* getWorld() const;
     
     
 private:
-    virtual void doSomething();
+   // virtual void doSomething();
+    StudentWorld* m_stdPtr;
 };
 
 class Penelope : Actor{
@@ -33,19 +33,7 @@ public:
     {
         
     }
-    void doSomething(){
-        if(m_isAlive == false){//check to see if she is still alive
-            return;
-        }
-        if(m_isInfected){
-            m_infectionCount++;
-            if(m_infectionCount == 500){
-                m_isAlive = false;
-                //playClip(SOUND_PLAYER_FIRE);
-            }
-        }
-        
-    }
+    void doSomething();
     
 private:
     bool m_isAlive;

@@ -5,12 +5,18 @@
 
 using namespace std;
 
+//returns a pointer to GameWorld!!!- seems useful...?
 GameWorld* createStudentWorld(string assetPath)
 {
 	return new StudentWorld(assetPath);
 }
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
+
+//Default constructor...(Not sure tho,,,,)
+StudentWorld::StudentWorld() : GameWorld(""){
+    
+}
 
 StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 {
@@ -34,4 +40,5 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
+    
 }
