@@ -58,7 +58,6 @@ void Penelope::doSomething(){
                 }
                 break;
                 
-                
                 //Needed for part II
 //            case KEY_PRESS_SPACE:
 //                break;

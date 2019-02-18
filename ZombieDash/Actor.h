@@ -14,7 +14,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(int imageID, double startX, double startY, Direction dir, int depth, double size);/*: GraphObject(imageID, startX, startY, dir, depth, size){
-    }*/
+                                                                                             }*/
     
     virtual ~Actor(){
         delete m_stdPtr;
@@ -26,10 +26,10 @@ public:
     
     
 private:
-   // virtual void doSomething();
+    // virtual void doSomething();
     StudentWorld* m_stdPtr;
     string actorType;
-
+    
 };
 
 class Penelope : public Actor{
