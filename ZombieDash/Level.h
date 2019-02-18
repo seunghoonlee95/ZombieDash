@@ -28,7 +28,7 @@ public:
                 m_maze[y][x] = empty;
     }
     
-    LoadResult loadLvel(std::string filename)
+    LoadResult loadLevel(std::string filename)
     {
         std::ifstream levelFile((m_assetPath + filename).c_str());
         if (!levelFile)

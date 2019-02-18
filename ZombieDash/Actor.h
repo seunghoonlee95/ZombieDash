@@ -32,7 +32,7 @@ private:
 
 };
 
-class Penelope : Actor{
+class Penelope : public Actor{
 public:
     Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size)
     :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
@@ -54,7 +54,7 @@ private:
     
 };
 
-class Wall : Actor{
+class Wall : public Actor{
 public:
     Wall(int imageID, double startX, double startY, Direction dir, int depth, double size):Actor(imageID, startX, startY, dir, depth, size), m_direction(right), m_depth(0){
         

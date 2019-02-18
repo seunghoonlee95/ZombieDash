@@ -57,6 +57,8 @@ void Penelope::doSomething(){
                     moveTo(getX(), getY() - 4);
                 }
                 break;
+                
+                
                 //Needed for part II
 //            case KEY_PRESS_SPACE:
 //                break;
@@ -64,10 +66,7 @@ void Penelope::doSomething(){
 //                break;
 //            case KEY_PRESS_ENTER:
 //                break;
-                
         }
+        
     }
-        
-        
-    
 }
