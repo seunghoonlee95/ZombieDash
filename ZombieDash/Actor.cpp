@@ -33,18 +33,38 @@ void Penelope::doSomething(){
         //user hit a key during this tick!
         switch(ch){
             case KEY_PRESS_LEFT:
-                if(getDirection() != left){
-                    setDirection(left);
-                }else{//move 4 pixels left unless it doesn't overlap with wall
+                setDirection(left);
+                //move 4 pixels left only when it doesn't overlap(intersect) with wall
+                if(!getWorld()->doesIntersect(getX() - 4, getY())){
                     moveTo(getX() - 4, getY());
                 }
-                    
-                
-                
-                //Set Penelope's direction to the specified movement direction
-                //Determine her destination location(4 pixels in the facing direction)
-                //If not intersect with bounding box of any wall,citizen zombie: update location using GraphObject's moveTo() method.
                 break;
+            case KEY_PRESS_RIGHT:
+                setDirection(right);
+                if(!getWorld()->doesIntersect(getX() + 4, getY())){
+                    moveTo(getX() + 4, getY());
+                }
+                break;
+            case KEY_PRESS_UP:
+                setDirection(up);
+                if(!getWorld()->doesIntersect(getX(), getY() + 4)){
+                    moveTo(getX(), getY() + 4);
+                }
+                break;
+            case KEY_PRESS_DOWN:
+                setDirection(down);
+                if(!getWorld()->doesIntersect(getX(), getY() - 4)){
+                    moveTo(getX(), getY() - 4);
+                }
+                break;
+                //Needed for part II
+//            case KEY_PRESS_SPACE:
+//                break;
+//            case KEY_PRESS_TAB:
+//                break;
+//            case KEY_PRESS_ENTER:
+//                break;
+                
         }
     }
         

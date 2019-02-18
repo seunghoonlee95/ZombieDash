@@ -2,6 +2,9 @@
 #define ACTOR_H_
 
 #include "GraphObject.h"
+#include <string>
+
+using namespace std;
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
@@ -18,11 +21,15 @@ public:
     }
     
     StudentWorld* getWorld() const;
+    string getActorType(){return actorType;}
+    void setActorType(string actor){actorType = actor;}
     
     
 private:
    // virtual void doSomething();
     StudentWorld* m_stdPtr;
+    string actorType;
+
 };
 
 class Penelope : Actor{
@@ -30,9 +37,10 @@ public:
     Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size)
     :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
     {
-        
+        setActorType("Penelope");
     }
     void doSomething();
+    
     
 private:
     bool m_isAlive;
@@ -48,9 +56,14 @@ private:
 
 class Wall : Actor{
 public:
-    Wall(int imageID, double startX, double startY, Direction dir, int depth, double size);
+    Wall(int imageID, double startX, double startY, Direction dir, int depth, double size):Actor(imageID, startX, startY, dir, depth, size), m_direction(right), m_depth(0){
+        
+    }
     void doSomething();
-  
+private:
+    Direction m_direction;
+    int m_depth;
+    
 };
 
 //Comment out these for now.
