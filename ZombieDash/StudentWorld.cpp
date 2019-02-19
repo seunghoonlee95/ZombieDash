@@ -28,71 +28,79 @@ StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 
 int StudentWorld::init()
 {
-//    Penelope player(IID_PLAYER, 200, 160, GraphObject::right, 0, 1.0);
-    Penelope* player = new Penelope(IID_PLAYER, 200, 160, GraphObject::right, 0, 1.0);
-    playerList.push_back(player);
+    Level lev(assetPath());
+    int level;
+    level = getLevel();
+    cout << "level : " << level << endl;
+    string levelFile;
+
+    switch(level){
+        case 1:
+            levelFile = "level01.txt";
+            break;
+        case 2:
+            levelFile = "level02.txt";
+            break;
+        case 3:
+            levelFile = "level03.txt";
+            break;
+        case 4:
+            levelFile = "level04.txt";
+            break;
+        case 5:
+            levelFile = "level05.txt";
+            break;
+        case 6:
+            levelFile = "level06.txt";
+            break;
+        }
+
+    Level::LoadResult result = lev.loadLevel(levelFile);
+    if (result == Level::load_fail_file_not_found){
+        cerr << "Cannot find level01.txt data file" << endl;
+    }else if (result == Level::load_fail_bad_format){
+        cerr << "Your level was improperly formatted" << endl;
+    }else if (result == Level::load_success){
+                cerr << "Successfully loaded level" << endl;
+                for(double x = 0; x < VIEW_WIDTH / SPRITE_WIDTH; x++){
+                    for(double y = 0; y < VIEW_HEIGHT / SPRITE_HEIGHT; y++){
+                        Level::MazeEntry ge = lev.getContentsOf(x,y); // level_x=5, level_y=10 switch (ge) // so x=80 and y=160
+                        switch (ge)
+                        {
+                            case Level::empty:
+                               // cout << "Location (" << x << ", " << y << ") is empty" << endl;
+                            case Level::smart_zombie:
+                              //  cout << "Location (" << x << ", " << y << ") is smart_zombie" << endl;
+                                break;
+                            case Level::dumb_zombie:
+                              //  cout << "Location (" << x << ", " << y << ") is dumb_zombie" << endl;
+                                break;
+                            case Level::player:
+                                cout << "Location (" << x << ", " << y << ") is player" << endl;
+                                playerList.push_back(new Penelope(IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0));
+                                break;
+                            case Level::exit:
+                              //  cout << "Location (" << x << ", " << y << ") is exit" << endl;
+                                break;
+                            case Level::wall:
+                                cout << "Location (" << x << ", " << y << ") is wall" << endl;
+                                actorList.push_back(new Wall(IID_WALL, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right, 0, 1.0));
+                                break;
+                            case Level::pit:
+                               // cout << "Location (" << x << ", " << y << ") is pit" << endl;
+                                break;
+                        }
+                    }
+                }
+            }
+ //=====================================================================================
+//    Penelope* player = new Penelope(IID_PLAYER, 200, 160, GraphObject::right, 0, 1.0);
+//    playerList.push_back(player);
+//    Wall* wall = new Wall(IID_WALL, 1, 1, GraphObject::right, 0, 1.0);
+//    actorList.push_back(wall);
  //=============================================
-//    Level* lev;
-//    int level;
-//    string levelFile;
-//    Level::LoadResult result;
-//    level = getLevel();
-//    cout << "Level : " << level << endl;
-//    switch(level){
-//        case 1:
-//            levelFile = assetPath() + "/" + "level01.txt";
-//            cout << "levelFile : " << levelFile << endl;
-//             result = lev->loadLevel(levelFile);
-//            break;
-//        case 2:
-//            levelFile = assetPath() + "/" + "level02.txt";
-//            result = lev->loadLevel(levelFile);
-//            break;
-//        case 3:
-//            levelFile = assetPath() + "/" + "level03.txt";
-//            result = lev->loadLevel(levelFile);
-//            break;
-//        case 4:
-//            levelFile = assetPath() + "/" + "level04.txt";
-//            result = lev->loadLevel(levelFile);
-//            break;
-//        case 5:
-//            levelFile = assetPath() + "/" + "level05.txt";
-//            result = lev->loadLevel(levelFile);
-//            break;
-//        case 6:
-//            levelFile = assetPath() + "/" + "level06.txt";
-//            result = lev->loadLevel(levelFile);
-//            break;
-//    }
-//    if(result == Level::load_fail_file_not_found){
-//        cerr << "Could not find level0" << level << ".txt file!" << endl;
-//        exit(1);
-//    }else if(result == Level::load_fail_bad_format){
-//        cerr << "Your level was improperly formatted!" << endl;
-//        exit(1);
-//    }else if(result == Level::load_success){
-//        cerr << "Successfully loaded level" << endl;
-//        Level::MazeEntry ge;
-//        for(int x = 0; x < VIEW_WIDTH / SPRITE_WIDTH; x++){
-//            for(int y = 0; y < VIEW_HEIGHT / SPRITE_HEIGHT; y++){
-//                ge = lev->getContentsOf(x, y);
-//                switch(ge){
-//                    case Level::empty:
-//                        break;
-//                    case Level::player:
-//                        actorList.push_back(new Penelope(IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0));
-//                        cout << "Penelope starting x : " << SPRITE_WIDTH * x << "/ starting y : " << SPRITE_HEIGHT * y << endl;
-//                        break;
-//                    case Level::wall:
-//                        actorList.push_back(new Wall(IID_WALL, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right, 0, 1.0));
-//                        cout << "Wall starting x : " << SPRITE_WIDTH * x << "/ starting y : " << SPRITE_HEIGHT * y << endl;
-//                        break;
-//                }
-//            }
-//        }
-//    }
-    
+
+         
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -103,21 +111,37 @@ int StudentWorld::move()
 //        (*it)->doSomething();
 //        it++;
 //    }
-    //playerList[0]->doSomething();
+//    string temp;
+//    temp = playerList[0]->getActorType();
+//    //playSound(SOUND_GOT_GOODIE);
+//
+//    cout << "playerList size = " << playerList.size() << endl;
+//    playerList[0]->doSomething();
+//    actorList[0]->doSomething();
+    
     // This code is here merely to allow the game to build, run, and terminate after you hit enter.
     // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
     decLives();
-    return GWSTATUS_PLAYER_DIED;
+    return GWSTATUS_CONTINUE_GAME ;
 }
 
 void StudentWorld::cleanUp()
 {
-//    vector<Actor*>::iterator it;
-//    it = actorList.begin();
-//    while(it != actorList.end()){
-//        delete(*it);
+//    vector<Actor*>::iterator actIt;
+//    actIt = actorList.begin();
+//    while(actIt != actorList.end()){
+//        delete(*actIt);
+//        actIt++;
 //    }
-//    actorList.clear();
+//
+//    vector<Penelope*>::iterator playerIt;
+//    playerIt = playerList.begin();
+//    while(playerIt != playerList.end()){
+//        delete(*playerIt);
+//        playerIt++;
+//    }
+    actorList.clear();
+    playerList.clear();
 }
 
 bool StudentWorld::doesIntersect(int x, int y){
@@ -127,7 +151,6 @@ bool StudentWorld::doesIntersect(int x, int y){
             if(abs((*it)->getX() - x) < 16 && abs((*it)->getY() - y) < 16){
                 return false;
             }
-            
         }
         it++;
     }

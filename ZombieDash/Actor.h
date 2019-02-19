@@ -4,29 +4,34 @@
 #include "GraphObject.h"
 #include <string>
 
+//Careful....
+#include "StudentWorld.h"
+//class StudentWorld;
+
 using namespace std;
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
-class StudentWorld;
 
 class Actor : public GraphObject{
 public:
     //Simple Constructor
-    Actor(int imageID, double startX, double startY, Direction dir, int depth, double size);/*: GraphObject(imageID, startX, startY, dir, depth, size){
-                                                                                             }*/
-    
+    Actor(int imageID, double startX, double startY, Direction dir, int depth, double size): GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(new StudentWorld){
+        
+    }
     virtual ~Actor(){
+        cout <<"Actor's destructor"<< endl;
         delete m_stdPtr;
     }
+     virtual void doSomething() = 0;
+
     
-    StudentWorld* getWorld() const;
+    StudentWorld* getWorld() const{return m_stdPtr;}
     string getActorType(){return actorType;}
     void setActorType(string actor){actorType = actor;}
     
     
 private:
-    // virtual void doSomething();
     StudentWorld* m_stdPtr;
     string actorType;
     
@@ -34,15 +39,21 @@ private:
 
 class Penelope : public Actor{
 public:
-    Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size)
+    Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size);
+    /*
     :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
     {
         setActorType("Penelope");
+    }*/
+    
+    virtual ~Penelope(){
+        
     }
     void doSomething();
-    
-    
+//    StudentWorld* getWorld() const;
+
 private:
+//    StudentWorld* m_stdPtr;
     bool m_isAlive;
     Direction m_direction;
     int m_depth;
@@ -56,7 +67,11 @@ private:
 
 class Wall : public Actor{
 public:
-    Wall(int imageID, double startX, double startY, Direction dir, int depth, double size):Actor(imageID, startX, startY, dir, depth, size), m_direction(right), m_depth(0){
+    Wall(int imageID, double startX, double startY, Direction dir, int depth, double size)
+    :Actor(imageID, startX, startY, dir, depth, size), m_direction(right), m_depth(0){
+        setActorType("Wall");
+    }
+    virtual ~Wall(){
         
     }
     void doSomething();

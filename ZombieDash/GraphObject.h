@@ -26,7 +26,6 @@ class GraphObject
     {
         if (m_size <= 0)
             m_size = 1;
-
         getGraphObjects(m_depth).insert(this);
     }
 

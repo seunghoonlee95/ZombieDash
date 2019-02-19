@@ -4,6 +4,7 @@
 #include "GameWorld.h"
 #include <string>
 #include <vector>
+#include <iostream>
 using namespace std;
 
 
@@ -17,7 +18,7 @@ class StudentWorld : public GameWorld
 public:
     StudentWorld(std::string assetPath);
     virtual ~StudentWorld(){
-        cleanUp();
+       cleanUp();
     }
     StudentWorld(); // I just made this default constructor up..
     virtual int init();
@@ -25,7 +26,10 @@ public:
     virtual void cleanUp();
     bool doesIntersect(int x, int y);
     bool doesOverlap(int x, int y);
-
+    void foo(){
+        cout << "for testing..." << endl;
+    }
+    int testInt = 100;
 private:
     vector<Actor*> actorList;
     vector<Penelope*> playerList;

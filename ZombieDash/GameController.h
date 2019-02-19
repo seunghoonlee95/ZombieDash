@@ -19,6 +19,7 @@ class GameController
 
     bool getLastKey(int& value)
     {
+//        std::cout << "getLastKey....value : " << value << std::endl;
         if (m_lastKeyHit != INVALID_KEY)
         {
             value = m_lastKeyHit;

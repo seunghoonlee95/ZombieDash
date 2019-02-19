@@ -7,8 +7,7 @@ using namespace std;
 bool GameWorld::getKey(int& value)
 {
     bool gotKey = m_controller->getLastKey(value);
-    if (gotKey)
-    {
+    if (gotKey){
         if (value == 'q'  ||  value == '\x03')  // CTRL-C
             m_controller->quitGame();
     }
