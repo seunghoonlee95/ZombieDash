@@ -20,7 +20,6 @@ public:
         
     }
     virtual ~Actor(){
-        cout <<"Actor's destructor"<< endl;
     }
     virtual void doSomething() = 0;
     
