@@ -50,14 +50,14 @@ void Penelope::doSomething(){
             case KEY_PRESS_LEFT:
                 setDirection(left);
                 //move 4 pixels left only when it doesn't overlap(intersect) with wall
-                if(!(getWorld()->doesIntersect(getX() - 4, getY())) ){
+                if(!(getWorld()->doesIntersect(this, getX() - 4, getY())) ){
                     cout << "Move left"<<endl;
                     moveTo(getX() - 4, getY());
                 }
                 break;
             case KEY_PRESS_RIGHT:
                 setDirection(right);
-                if(!(getWorld()->doesIntersect(getX() + 4, getY()))){
+                if(!(getWorld()->doesIntersect(this, getX() + 4, getY()))){
                     cout << "Move right"<<endl;
 
                     moveTo(getX() + 4, getY());
@@ -65,7 +65,7 @@ void Penelope::doSomething(){
                 break;
             case KEY_PRESS_UP:
                 setDirection(up);
-                if(!(getWorld()->doesIntersect(getX(), getY() + 4))){
+                if(!(getWorld()->doesIntersect(this, getX(), getY() + 4))){
                     cout << "Move up"<<endl;
 
                     moveTo(getX(), getY() + 4);
@@ -73,7 +73,7 @@ void Penelope::doSomething(){
                 break;
             case KEY_PRESS_DOWN:
                 setDirection(down);
-                if(!(getWorld()->doesIntersect(getX(), getY() - 4))){
+                if(!(getWorld()->doesIntersect(this, getX(), getY() - 4))){
                     cout << "Move down"<<endl;
 
                     moveTo(getX(), getY() - 4);

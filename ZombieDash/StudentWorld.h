@@ -18,13 +18,12 @@ class StudentWorld : public GameWorld
 public:
     StudentWorld(std::string assetPath);
     virtual ~StudentWorld(){
-       // cleanUp();
+        cleanUp();
     }
-    StudentWorld(); // I just made this default constructor up..
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-    bool doesIntersect(int x, int y);
+    bool doesIntersect(Actor* sameActor, int x, int y);
     bool doesOverlap(int x, int y);
     void foo(){
         cout << "for testing..." << endl;

@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <iostream>
+#include <cstdlib>
 using namespace std;
 
 //returns a pointer to GameWorld!!!- seems useful...?
@@ -16,10 +17,7 @@ GameWorld* createStudentWorld(string assetPath)
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
-//Default constructor...(Not sure tho,,,,)
-StudentWorld::StudentWorld() : GameWorld(""){
-    
-}
+
 
 StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 {
@@ -117,44 +115,33 @@ int StudentWorld::move()
 
 void StudentWorld::cleanUp()
 {
-//    vector<Actor*>::iterator actIt;
-//    actIt = actorList.begin();
-//    while(actIt != actorList.end()){
-//        delete(*actIt);
-//        actIt++;
-//    }
-//
-//    vector<Penelope*>::iterator playerIt;
-//    playerIt = playerList.begin();
-//    while(playerIt != playerList.end()){
-//        delete(*playerIt);
-//        playerIt++;
-//    }
-    actorList.clear();
-//    playerList.clear();
-    delete playerPtr;
+    if(!actorList.empty()){
+        vector<Actor*>::iterator actIt;
+        actIt = actorList.begin();
+        while(actIt != actorList.end()){
+            delete(*actIt);
+            actIt++;
+        }
+        actorList.clear();
+        delete playerPtr;
+    }
+
+    
 }
 
-bool StudentWorld::doesIntersect(int x, int y){
+bool StudentWorld::doesIntersect(Actor* sameActor, int x, int y){
     vector<Actor*>::iterator actIt = actorList.begin();
 //    cout << "typeid : " << typeid(*actIt).name() << endl;
 //    cout << "Penelope typeid : " << typeid(playerPtr).name() << endl;
     while(actIt != actorList.end()){
-        if((*actIt)->getActorType() == "Wall"){
-            //cout << "It's a wall!"<<endl;
-            if(abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
-                return true;
+       // if((*actIt)->getActorType() == "Wall"){
+            if(sameActor != (*actIt) && abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
+                if((*actIt)->getPassable() == false){//if the destination object is not passable return true
+                    return true;
+                }
             }
-        }
-            
-
+        //}
         actIt++;
     }
-    
-//    vector<Penelope*>::iterator playerIt = playerList.begin();
-//    if(abs((*playerIt)->getX() - x) < 16 && abs((*playerIt)->getY() - y) < 16){
-//        return true;
-//    }
-    
     return false;
 }

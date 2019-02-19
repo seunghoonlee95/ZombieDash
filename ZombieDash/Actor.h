@@ -16,16 +16,24 @@ using namespace std;
 class Actor : public GraphObject{
 public:
     //Simple Constructor
-    Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size): GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr){
+    Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size): GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), passable(false){
         
     }
     virtual ~Actor(){
         cout <<"Actor's destructor"<< endl;
-        delete m_stdPtr;
     }
-     virtual void doSomething() = 0;
-
+    virtual void doSomething() = 0;
     
+    bool getPassable(){
+        return passable;
+    }
+    
+    void setPassable(bool passVal){
+        passable = passVal;
+    }
+    
+
+    bool passable;
     StudentWorld* getWorld() const{return m_stdPtr;}
     string getActorType(){return actorType;}
     void setActorType(string actor){actorType = actor;}
@@ -49,8 +57,8 @@ public:
         
     }
     void doSomething();
-//    StudentWorld* getWorld() const;
-
+    
+    
 private:
 //    StudentWorld* m_stdPtr;
     bool m_isAlive;
