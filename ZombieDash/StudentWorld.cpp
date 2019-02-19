@@ -76,15 +76,15 @@ int StudentWorld::init()
                               //  cout << "Location (" << x << ", " << y << ") is dumb_zombie" << endl;
                                 break;
                             case Level::player:
-                                cout << "Location (" << x << ", " << y << ") is player" << endl;
-                                playerList.push_back(new Penelope(IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0));
+//                                cout << "Location (" << x << ", " << y << ") is player" << endl;
+                                playerList.push_back(new Penelope(this, IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0));
                                 break;
                             case Level::exit:
                               //  cout << "Location (" << x << ", " << y << ") is exit" << endl;
                                 break;
                             case Level::wall:
-                                cout << "Location (" << x << ", " << y << ") is wall" << endl;
-                                actorList.push_back(new Wall(IID_WALL, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right, 0, 1.0));
+//                                cout << "Location (" << x << ", " << y << ") is wall" << endl;
+                                actorList.push_back(new Wall(this, IID_WALL, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right, 0, 1.0));
                                 break;
                             case Level::pit:
                                // cout << "Location (" << x << ", " << y << ") is pit" << endl;
@@ -106,19 +106,16 @@ int StudentWorld::init()
 
 int StudentWorld::move()
 {
-//    vector<Actor*>::iterator it = actorList.begin();
-//    while(it != actorList.end()){
-//        (*it)->doSomething();
-//        it++;
-//    }
-//    string temp;
-//    temp = playerList[0]->getActorType();
-//    //playSound(SOUND_GOT_GOODIE);
-//
-//    cout << "playerList size = " << playerList.size() << endl;
-//    playerList[0]->doSomething();
-//    actorList[0]->doSomething();
+    vector<Actor*>::iterator actIt = actorList.begin();
+    while(actIt != actorList.end()){
+        (*actIt)->doSomething();
+        actIt++;
+    }
     
+    vector<Penelope*>::iterator playerIt = playerList.begin();
+    (*playerIt)->doSomething();
+    
+
     // This code is here merely to allow the game to build, run, and terminate after you hit enter.
     // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
     decLives();
@@ -145,14 +142,18 @@ void StudentWorld::cleanUp()
 }
 
 bool StudentWorld::doesIntersect(int x, int y){
-    vector<Actor*>::iterator it = actorList.begin();
-    while(it != actorList.end()){
-        if((*it)-> getActorType() == "Penelope" || (*it)-> getActorType() == "Wall" || (*it)-> getActorType() == "Citizen" || (*it)-> getActorType() == "Zombie" ){
-            if(abs((*it)->getX() - x) < 16 && abs((*it)->getY() - y) < 16){
-                return false;
+    vector<Actor*>::iterator actIt = actorList.begin();
+    while(actIt != actorList.end()){
+            if(abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
+                return true;
             }
-        }
-        it++;
+        actIt++;
     }
-    return true;
+    
+//    vector<Penelope*>::iterator playerIt = playerList.begin();
+//    if(abs((*playerIt)->getX() - x) < 16 && abs((*playerIt)->getY() - y) < 16){
+//        return true;
+//    }
+    
+    return false;
 }

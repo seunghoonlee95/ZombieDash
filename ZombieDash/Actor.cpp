@@ -20,7 +20,7 @@ class StudentWorld;
 //    return m_stdPtr;
 //}
 
-Penelope::Penelope(int imageID, double startX, double startY, Direction dir, int depth, double size) :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0){
+Penelope::Penelope(StudentWorld* stdWorld, int imageID, double startX, double startY, Direction dir, int depth, double size) :Actor(stdWorld, imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0){
     setActorType("Penelope");
     /*m_stdPtr = new StudentWorld("temp");*/
 }
@@ -29,14 +29,7 @@ Penelope::Penelope(int imageID, double startX, double startY, Direction dir, int
 //    return m_stdPtr;
 //}
 
-void Penelope::doSomething(){
-    cout << "Penelope's doSomething()" << endl;
-//    StudentWorld *temp = new StudentWorld();
-//    temp->playSound(SOUND_GOT_GOODIE);
-//    int tempLevel;
-//    tempLevel = getWorld()->getLevel();
-//    cout << "tempLevel : " << tempLevel;
-    
+void Penelope::doSomething(){    
     if(m_isAlive == false){//check to see if she is still alive
         return;
     }
@@ -47,48 +40,52 @@ void Penelope::doSomething(){
             getWorld()->playSound(SOUND_PLAYER_DIE);
         }
     }
-    moveTo(getX() + 1, getY());
-    int ch;
 //    if(getWorld()->getKey(ch)){
 //        cout << "ch : " << ch << endl;
 //    }
-    
-//    getWorld()->getKey(ch);
-//    if(getWorld()->getKey(ch)){
-//        //user hit a key during this tick!
-//        switch(ch){
-//            case KEY_PRESS_LEFT:
-//                setDirection(left);
-//                //move 4 pixels left only when it doesn't overlap(intersect) with wall
-//                //if(!getWorld()->doesIntersect(getX() - 4, getY())){
-//                    moveTo(getX() - 4, getY());
-//                //}
-//                break;
-//            case KEY_PRESS_RIGHT:
-//                setDirection(right);
-//                //if(!getWorld()->doesIntersect(getX() + 4, getY())){
-//                    moveTo(getX() + 4, getY());
-//                //}
-//                break;
-//            case KEY_PRESS_UP:
-//                setDirection(up);
-//                //if(!getWorld()->doesIntersect(getX(), getY() + 4)){
-//                    moveTo(getX(), getY() + 4);
-//                //}
-//                break;
-//            case KEY_PRESS_DOWN:
-//                setDirection(down);
-//                //if(!getWorld()->doesIntersect(getX(), getY() - 4)){
-//                    moveTo(getX(), getY() - 4);
-//                //}
-//                break;
-//
-//
-//        }
-//
-//    }
+    int ch;
+    if(getWorld()->getKey(ch)){
+        //user hit a key during this tick!
+        switch(ch){
+            case KEY_PRESS_LEFT:
+                setDirection(left);
+                //move 4 pixels left only when it doesn't overlap(intersect) with wall
+                if(!(getWorld()->doesIntersect(getX() - 4, getY())) ){
+                    cout << "Move left"<<endl;
+                    moveTo(getX() - 4, getY());
+                }
+                break;
+            case KEY_PRESS_RIGHT:
+                setDirection(right);
+                if(!(getWorld()->doesIntersect(getX() + 4, getY()))){
+                    cout << "Move right"<<endl;
+
+                    moveTo(getX() + 4, getY());
+                }
+                break;
+            case KEY_PRESS_UP:
+                setDirection(up);
+                if(!(getWorld()->doesIntersect(getX(), getY() + 4))){
+                    cout << "Move up"<<endl;
+
+                    moveTo(getX(), getY() + 4);
+                }
+                break;
+            case KEY_PRESS_DOWN:
+                setDirection(down);
+                if(!(getWorld()->doesIntersect(getX(), getY() - 4))){
+                    cout << "Move down"<<endl;
+
+                    moveTo(getX(), getY() - 4);
+                }
+                break;
+
+
+        }
+
+    }
 }
 
 void Wall::doSomething(){
-    cout << "wall does nothing!"<<endl;
+//    cout << "wall does nothing!"<<endl;
 }
