@@ -1,4 +1,4 @@
-#include "StudentWorld.h"
+ #include "StudentWorld.h"
 #include "GameConstants.h"
 #include "GraphObject.h"
 #include "Actor.h"
@@ -16,8 +16,6 @@ GameWorld* createStudentWorld(string assetPath)
 }
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
-
-
 
 StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 {
@@ -84,14 +82,6 @@ int StudentWorld::init()
                     }
                 }
             }
- //=====================================================================================
-//    Penelope* player = new Penelope(IID_PLAYER, 200, 160, GraphObject::right, 0, 1.0);
-//    playerList.push_back(player);
-//    Wall* wall = new Wall(IID_WALL, 1, 1, GraphObject::right, 0, 1.0);
-//    actorList.push_back(wall);
- //=============================================
-
-         
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -103,8 +93,6 @@ int StudentWorld::move()
         actIt++;
     }
     
-//    vector<Penelope*>::iterator playerIt = playerList.begin();
-//    (*playerIt)->doSomething();
     playerPtr->doSomething();
 
     // This code is here merely to allow the game to build, run, and terminate after you hit enter.
