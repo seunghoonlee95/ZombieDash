@@ -18,7 +18,7 @@ class StudentWorld : public GameWorld
 public:
     StudentWorld(std::string assetPath);
     virtual ~StudentWorld(){
-       cleanUp();
+       // cleanUp();
     }
     StudentWorld(); // I just made this default constructor up..
     virtual int init();
@@ -32,7 +32,7 @@ public:
     int testInt = 100;
 private:
     vector<Actor*> actorList;
-    vector<Penelope*> playerList;
+    Penelope* playerPtr;
 };
 
 #endif // STUDENTWORLD_H_

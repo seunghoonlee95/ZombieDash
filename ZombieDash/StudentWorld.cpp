@@ -68,26 +68,19 @@ int StudentWorld::init()
                         switch (ge)
                         {
                             case Level::empty:
-                               // cout << "Location (" << x << ", " << y << ") is empty" << endl;
                             case Level::smart_zombie:
-                              //  cout << "Location (" << x << ", " << y << ") is smart_zombie" << endl;
                                 break;
                             case Level::dumb_zombie:
-                              //  cout << "Location (" << x << ", " << y << ") is dumb_zombie" << endl;
                                 break;
                             case Level::player:
-//                                cout << "Location (" << x << ", " << y << ") is player" << endl;
-                                playerList.push_back(new Penelope(this, IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0));
+                                playerPtr = new Penelope(this, IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0);
                                 break;
                             case Level::exit:
-                              //  cout << "Location (" << x << ", " << y << ") is exit" << endl;
                                 break;
                             case Level::wall:
-//                                cout << "Location (" << x << ", " << y << ") is wall" << endl;
                                 actorList.push_back(new Wall(this, IID_WALL, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right, 0, 1.0));
                                 break;
                             case Level::pit:
-                               // cout << "Location (" << x << ", " << y << ") is pit" << endl;
                                 break;
                         }
                     }
@@ -112,9 +105,9 @@ int StudentWorld::move()
         actIt++;
     }
     
-    vector<Penelope*>::iterator playerIt = playerList.begin();
-    (*playerIt)->doSomething();
-    
+//    vector<Penelope*>::iterator playerIt = playerList.begin();
+//    (*playerIt)->doSomething();
+    playerPtr->doSomething();
 
     // This code is here merely to allow the game to build, run, and terminate after you hit enter.
     // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
@@ -138,15 +131,23 @@ void StudentWorld::cleanUp()
 //        playerIt++;
 //    }
     actorList.clear();
-    playerList.clear();
+//    playerList.clear();
+    delete playerPtr;
 }
 
 bool StudentWorld::doesIntersect(int x, int y){
     vector<Actor*>::iterator actIt = actorList.begin();
+//    cout << "typeid : " << typeid(*actIt).name() << endl;
+//    cout << "Penelope typeid : " << typeid(playerPtr).name() << endl;
     while(actIt != actorList.end()){
+        if((*actIt)->getActorType() == "Wall"){
+            //cout << "It's a wall!"<<endl;
             if(abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
                 return true;
             }
+        }
+            
+
         actIt++;
     }
     
