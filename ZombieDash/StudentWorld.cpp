@@ -28,7 +28,7 @@ int StudentWorld::init()
     Level lev(assetPath());
     int level;
     level = getLevel();
-    cout << "level : " << level << endl;
+//    cout << "level : " << level << endl;
     string levelFile;
 
     switch(level){

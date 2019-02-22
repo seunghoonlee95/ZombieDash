@@ -25,9 +25,7 @@ public:
     virtual void cleanUp();
     bool doesIntersect(Actor* sameActor, int x, int y);
     bool doesOverlap(int x, int y);
-    void foo(){
-        cout << "for testing..." << endl;
-    }
+
     int testInt = 100;
 private:
     vector<Actor*> actorList;

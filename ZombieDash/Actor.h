@@ -21,7 +21,7 @@ public:
     }
     virtual ~Actor(){
     }
-    virtual void doSomething(){}
+    virtual void doSomething()=0;
     
     bool getPassable(){
         return passable;
