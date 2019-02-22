@@ -12,57 +12,49 @@ using namespace std;
 
 // Students:  Add code to this file, Actor.cpp, StudentWorld.h, and StudentWorld.cpp
 
-
 class Actor : public GraphObject{
 public:
     //Simple Constructor
-    Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size): GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), passable(false){
-        
+    Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), passable(false), m_isAlive(true)
+    {
     }
     virtual ~Actor(){
     }
-    virtual void doSomething() = 0;
+    virtual void doSomething(){}
     
     bool getPassable(){
         return passable;
     }
-    
     void setPassable(bool passVal){
         passable = passVal;
     }
-    
-
-    bool passable;
+    bool getIsAlive(){
+        return m_isAlive;
+    }
+    void setIsAlive(bool status){
+        m_isAlive = status;
+    }
     StudentWorld* getWorld() const{return m_stdPtr;}
-    string getActorType(){return actorType;}
-    void setActorType(string actor){actorType = actor;}
-    
-    
 private:
     StudentWorld* m_stdPtr;
-    string actorType;
+    bool passable;
+    bool m_isAlive;
     
 };
 
 class Penelope : public Actor{
 public:
-    Penelope(StudentWorld* stdWorld, int imageID, double startX, double startY, Direction dir, int depth, double size);
-    /*
-    :Actor(imageID, startX, startY, dir, depth, size), m_isAlive(true), m_direction(right), m_depth(0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0)
-    {
-        setActorType("Penelope");
-    }*/
+    Penelope(StudentWorld* stdWorld, double startX, double startY)
+    :Actor(stdWorld, IID_PLAYER, startX, startY, right, 0, 1.0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0){
+        setIsAlive(true);
+    }
     virtual ~Penelope(){
         
     }
     void doSomething();
     
-    
 private:
-//    StudentWorld* m_stdPtr;
-    bool m_isAlive;
-    Direction m_direction;
-    int m_depth;
     bool m_hasLandmines;
     int m_flameThrowerCharges;
     bool m_hasVaccine;
@@ -73,17 +65,14 @@ private:
 
 class Wall : public Actor{
 public:
-    Wall(StudentWorld* stdWorld, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :Actor(stdWorld, imageID, startX, startY, dir, depth, size), m_direction(right), m_depth(0){
-        setActorType("Wall");
+    Wall(StudentWorld* stdWorld, double startX, double startY)
+    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
     }
     virtual ~Wall(){
-        
     }
-    void doSomething();
+    void doSomething(){}
 private:
-    Direction m_direction;
-    int m_depth;
+
     
 };
 

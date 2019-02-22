@@ -19,7 +19,8 @@ GameWorld* createStudentWorld(string assetPath)
 
 StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 {
-    
+    actorList.reserve(256);
+    playerPtr = nullptr;
 }
 
 int StudentWorld::init()
@@ -69,12 +70,12 @@ int StudentWorld::init()
                             case Level::dumb_zombie:
                                 break;
                             case Level::player:
-                                playerPtr = new Penelope(this, IID_PLAYER, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right,0 , 1.0);
+                                playerPtr = new Penelope(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y);
                                 break;
                             case Level::exit:
                                 break;
                             case Level::wall:
-                                actorList.push_back(new Wall(this, IID_WALL, SPRITE_WIDTH * x, SPRITE_HEIGHT * y, GraphObject::right, 0, 1.0));
+                                actorList.push_back(new Wall(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                                 break;
                             case Level::pit:
                                 break;
@@ -97,8 +98,8 @@ int StudentWorld::move()
 
     // This code is here merely to allow the game to build, run, and terminate after you hit enter.
     // Notice that the return value GWSTATUS_PLAYER_DIED will cause our framework to end the current level.
-    decLives();
-    return GWSTATUS_CONTINUE_GAME ;
+    //decLives();
+    return GWSTATUS_CONTINUE_GAME;
 }
 
 void StudentWorld::cleanUp()
@@ -113,8 +114,6 @@ void StudentWorld::cleanUp()
         actorList.clear();
         delete playerPtr;
     }
-
-    
 }
 
 bool StudentWorld::doesIntersect(Actor* sameActor, int x, int y){

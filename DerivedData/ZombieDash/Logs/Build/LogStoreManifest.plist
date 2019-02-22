@@ -6,7 +6,7 @@
 	<integer>9</integer>
 	<key>logs</key>
 	<dict>
-		<key>3B5AC68C-8065-440D-BCBC-CEE8CC4AD6F2</key>
+		<key>6BBD6312-4A91-4479-900D-ACC955EE2EBA</key>
 		<dict>
 			<key>className</key>
 			<string>IDEActivityLogSection</string>
@@ -15,9 +15,9 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>3B5AC68C-8065-440D-BCBC-CEE8CC4AD6F2.xcactivitylog</string>
+			<string>6BBD6312-4A91-4479-900D-ACC955EE2EBA.xcactivitylog</string>
 			<key>highLevelStatus</key>
-			<string>S</string>
+			<string>W</string>
 			<key>schemeIdentifier-containerName</key>
 			<string>ZombieDash project</string>
 			<key>schemeIdentifier-schemeName</key>
@@ -27,15 +27,15 @@
 			<key>signature</key>
 			<string>Build ZombieDash</string>
 			<key>timeStartedRecording</key>
-			<real>572252695.71709204</real>
+			<real>572477434.21022296</real>
 			<key>timeStoppedRecording</key>
-			<real>572252695.78272104</real>
+			<real>572477435.76505697</real>
 			<key>title</key>
 			<string>Build ZombieDash</string>
 			<key>uniqueIdentifier</key>
-			<string>3B5AC68C-8065-440D-BCBC-CEE8CC4AD6F2</string>
+			<string>6BBD6312-4A91-4479-900D-ACC955EE2EBA</string>
 		</dict>
-		<key>F5196BDF-8061-4A43-B2DA-EB8D3AA64232</key>
+		<key>88FEA571-2185-445F-BAA6-9F4E429A4993</key>
 		<dict>
 			<key>className</key>
 			<string>IDEActivityLogSection</string>
@@ -44,9 +44,9 @@
 			<key>domainType</key>
 			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
 			<key>fileName</key>
-			<string>F5196BDF-8061-4A43-B2DA-EB8D3AA64232.xcactivitylog</string>
+			<string>88FEA571-2185-445F-BAA6-9F4E429A4993.xcactivitylog</string>
 			<key>highLevelStatus</key>
-			<string>S</string>
+			<string>W</string>
 			<key>schemeIdentifier-containerName</key>
 			<string>ZombieDash project</string>
 			<key>schemeIdentifier-schemeName</key>
@@ -56,13 +56,129 @@
 			<key>signature</key>
 			<string>Build ZombieDash</string>
 			<key>timeStartedRecording</key>
-			<real>572295259.58518195</real>
+			<real>572492290.34924603</real>
 			<key>timeStoppedRecording</key>
-			<real>572295259.660707</real>
+			<real>572492292.25422096</real>
 			<key>title</key>
 			<string>Build ZombieDash</string>
 			<key>uniqueIdentifier</key>
-			<string>F5196BDF-8061-4A43-B2DA-EB8D3AA64232</string>
+			<string>88FEA571-2185-445F-BAA6-9F4E429A4993</string>
+		</dict>
+		<key>CCA8ACF3-B3CC-428A-A538-3E1ED7B6538A</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>CCA8ACF3-B3CC-428A-A538-3E1ED7B6538A.xcactivitylog</string>
+			<key>highLevelStatus</key>
+			<string>W</string>
+			<key>schemeIdentifier-containerName</key>
+			<string>ZombieDash project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>ZombieDash</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Build ZombieDash</string>
+			<key>timeStartedRecording</key>
+			<real>572492429.40249801</real>
+			<key>timeStoppedRecording</key>
+			<real>572492430.384305</real>
+			<key>title</key>
+			<string>Build ZombieDash</string>
+			<key>uniqueIdentifier</key>
+			<string>CCA8ACF3-B3CC-428A-A538-3E1ED7B6538A</string>
+		</dict>
+		<key>EC98B642-F054-4AE3-8C55-0E3BEE86E1C1</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>EC98B642-F054-4AE3-8C55-0E3BEE86E1C1.xcactivitylog</string>
+			<key>highLevelStatus</key>
+			<string>W</string>
+			<key>schemeIdentifier-containerName</key>
+			<string>ZombieDash project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>ZombieDash</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Build ZombieDash</string>
+			<key>timeStartedRecording</key>
+			<real>572492358.165856</real>
+			<key>timeStoppedRecording</key>
+			<real>572492359.32042098</real>
+			<key>title</key>
+			<string>Build ZombieDash</string>
+			<key>uniqueIdentifier</key>
+			<string>EC98B642-F054-4AE3-8C55-0E3BEE86E1C1</string>
+		</dict>
+		<key>F0A0D7F8-5795-4C7B-882B-FC209C9B6B34</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>F0A0D7F8-5795-4C7B-882B-FC209C9B6B34.xcactivitylog</string>
+			<key>highLevelStatus</key>
+			<string>E</string>
+			<key>schemeIdentifier-containerName</key>
+			<string>ZombieDash project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>ZombieDash</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Build ZombieDash</string>
+			<key>timeStartedRecording</key>
+			<real>572492348.68818295</real>
+			<key>timeStoppedRecording</key>
+			<real>572492350.09656799</real>
+			<key>title</key>
+			<string>Build ZombieDash</string>
+			<key>uniqueIdentifier</key>
+			<string>F0A0D7F8-5795-4C7B-882B-FC209C9B6B34</string>
+		</dict>
+		<key>F99A2143-8C82-43C4-9009-3C9271A18831</key>
+		<dict>
+			<key>className</key>
+			<string>IDEActivityLogSection</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>F99A2143-8C82-43C4-9009-3C9271A18831.xcactivitylog</string>
+			<key>highLevelStatus</key>
+			<string>W</string>
+			<key>schemeIdentifier-containerName</key>
+			<string>ZombieDash project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>ZombieDash</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Build ZombieDash</string>
+			<key>timeStartedRecording</key>
+			<real>572491507.56130898</real>
+			<key>timeStoppedRecording</key>
+			<real>572491509.04413402</real>
+			<key>title</key>
+			<string>Build ZombieDash</string>
+			<key>uniqueIdentifier</key>
+			<string>F99A2143-8C82-43C4-9009-3C9271A18831</string>
 		</dict>
 	</dict>
 </dict>
