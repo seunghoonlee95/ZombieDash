@@ -16,7 +16,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), passable(false), m_isAlive(true), canBeBurned(true), m_canUseExit(false)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true)
     {
     }
     virtual ~Actor(){
@@ -24,10 +24,10 @@ public:
     virtual void doSomething()=0;
     
     bool getPassable(){
-        return passable;
+        return m_passable;
     }
     void setPassable(bool passVal){
-        passable = passVal;
+        m_passable = passVal;
     }
     bool getIsAlive(){
         return m_isAlive;
@@ -41,11 +41,11 @@ public:
     }
     
     bool getCanBeBurned(){
-        return canBeBurned;
+        return m_canBeBurned;
     }
     
     void setCanBeBurned(bool burnable){
-        canBeBurned = burnable;
+        m_canBeBurned = burnable;
     }
     
     bool getCanUseExit(){
@@ -55,12 +55,20 @@ public:
         m_canUseExit = exitUsable;
     }
     
+    bool getCanBeInfected(){
+        return m_canBeInfected;
+    }
+    void setCanBeInfected(bool infectable){
+        m_canBeInfected = infectable;
+    }
+    
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
-    bool passable;
+    bool m_passable;
     bool m_isAlive;
-    bool canBeBurned;
+    bool m_canBeBurned;
+    bool m_canBeInfected;
     bool m_canUseExit;
     
 };
@@ -122,6 +130,7 @@ public:
     Wall(StudentWorld* stdWorld, double startX, double startY)
     :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
         setCanBeBurned(false);
+        setCanBeInfected(false);
     }
     virtual ~Wall(){}
     void doSomething(){}
@@ -136,6 +145,7 @@ public:
     :Actor(stdWorld, IID_EXIT, startX, startY, right, 1, 1.0){
         setPassable(true);
         setCanBeBurned(false);
+        setCanBeInfected(false);
     }
     virtual ~Exit(){}
     void doSomething();
@@ -184,8 +194,9 @@ public:
     :Actor(stdWorld, IID_VACCINE_GOODIE, startX, startY, right, 1, 1.0)
     {
         setPassable(true);
+        setCanBeInfected(false);
     }
-    void doSomething(){}
+    void doSomething();
 
 };
 //

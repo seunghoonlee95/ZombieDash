@@ -26,6 +26,7 @@ public:
     bool doesIntersect(Actor* sameActor, double x, double y);
     bool doesOverlap(Actor* sameActor, double x, double y);
     void escapeHumans(double exitX, double exitY);
+    bool doesOverlapWithPlayer(Actor* goodie, double x, double y);
 
     bool getFinishedLevel(){
         return m_finishedLevel;

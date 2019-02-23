@@ -59,3 +59,11 @@ void Exit::doSomething(){
     getWorld()->escapeHumans(getX(), getY());
     
 }
+
+void VaccineGoodie::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+//    getWorld()->doesOverlapWithPlayer(this, getX(), getY());
+    //if()
+}

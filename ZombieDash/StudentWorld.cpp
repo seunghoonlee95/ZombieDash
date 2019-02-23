@@ -81,6 +81,9 @@ int StudentWorld::init(){
                                 break;
                             case Level::pit:
                                 break;
+                            case Level::vaccine_goodie:
+                                actorList.push_back(new VaccineGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                                break;
                         }
                     }
                 }
@@ -148,11 +151,11 @@ bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
 }
 
 //The distance between the center points should be less than or equal to 10 pixels..
-bool StudentWorld::doesOverlap(Actor *sameActor, double x, double y){
+bool StudentWorld::doesOverlap(Actor *sameActor, double otherX, double otherY){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         double distance;
-        distance = sqrt(pow(sameActor->getX() - x, 2) + pow(sameActor->getY() - y, 2));
+        distance = sqrt(pow(sameActor->getX() - otherX, 2) + pow(sameActor->getY() - otherY, 2));
         if(sameActor != (*actIt) && distance <= 10.0){
             return true;
         }
@@ -184,3 +187,11 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
     }
     
 }
+
+//bool doesOverlapWithPlayer(Actor* goodie, double x, double y){
+////    if(){
+////
+////    }
+//    return false;
+//}
+
