@@ -1,4 +1,4 @@
- #include "StudentWorld.h"
+#include "StudentWorld.h"
 #include "GameConstants.h"
 #include "GraphObject.h"
 #include "Actor.h"
@@ -14,7 +14,7 @@ using namespace std;
 //returns a pointer to GameWorld!!!- seems useful...?
 GameWorld* createStudentWorld(string assetPath)
 {
-	return new StudentWorld(assetPath);
+    return new StudentWorld(assetPath);
 }
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
@@ -30,9 +30,9 @@ int StudentWorld::init(){
     Level lev(assetPath());
     int level;
     level = getLevel();
-//    cout << "level : " << level << endl;
+    //    cout << "level : " << level << endl;
     string levelFile;
-
+    
     switch(level){
         case 1:
             levelFile = "level01.txt";
@@ -52,42 +52,42 @@ int StudentWorld::init(){
         case 6:
             levelFile = "level06.txt";
             break;
-        }
-
+    }
+    
     Level::LoadResult result = lev.loadLevel(levelFile);
     if (result == Level::load_fail_file_not_found){
         cerr << "Cannot find level01.txt data file" << endl;
     }else if (result == Level::load_fail_bad_format){
         cerr << "Your level was improperly formatted" << endl;
     }else if (result == Level::load_success){
-                cerr << "Successfully loaded level" << endl;
-                for(double x = 0; x < VIEW_WIDTH / SPRITE_WIDTH; x++){
-                    for(double y = 0; y < VIEW_HEIGHT / SPRITE_HEIGHT; y++){
-                        Level::MazeEntry ge = lev.getContentsOf(x,y); // level_x=5, level_y=10 switch (ge) // so x=80 and y=160
-                        switch (ge){
-                            case Level::empty:
-                            case Level::smart_zombie:
-                                break;
-                            case Level::dumb_zombie:
-                                break;
-                            case Level::player:
-                                playerPtr = new Penelope(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y);
-                                break;
-                            case Level::exit:
-                                actorList.push_back(new Exit(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
-                                break;
-                            case Level::wall:
-                                actorList.push_back(new Wall(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
-                                break;
-                            case Level::pit:
-                                break;
-                            case Level::vaccine_goodie:
-                                actorList.push_back(new VaccineGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
-                                break;
-                        }
-                    }
+        cerr << "Successfully loaded level" << endl;
+        for(double x = 0; x < VIEW_WIDTH / SPRITE_WIDTH; x++){
+            for(double y = 0; y < VIEW_HEIGHT / SPRITE_HEIGHT; y++){
+                Level::MazeEntry ge = lev.getContentsOf(x,y); // level_x=5, level_y=10 switch (ge) // so x=80 and y=160
+                switch (ge){
+                    case Level::empty:
+                    case Level::smart_zombie:
+                        break;
+                    case Level::dumb_zombie:
+                        break;
+                    case Level::player:
+                        playerPtr = new Penelope(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y);
+                        break;
+                    case Level::exit:
+                        actorList.push_back(new Exit(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        break;
+                    case Level::wall:
+                        actorList.push_back(new Wall(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        break;
+                    case Level::pit:
+                        break;
+                    case Level::vaccine_goodie:
+                        actorList.push_back(new VaccineGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        break;
                 }
             }
+        }
+    }
     return GWSTATUS_CONTINUE_GAME;
 }
 
@@ -104,11 +104,42 @@ int StudentWorld::move(){
         decLives();
         return GWSTATUS_PLAYER_DIED;
     }
+    int actorListSize = actorList.size();
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
-        (*actIt)->doSomething();
-        actIt++;
+        if((*actIt)->getIsAlive() == false){
+            //delete *actIt;
+            cout << "gonna erase goodie!" << endl;
+            cout << "actorListSize : " << actorListSize << endl;
+            delete *actIt;
+            actorList.erase(actIt);
+            actIt++;
+            cout << "erased goodie!" << endl;
+            cout << "actorListSize : " << actorListSize << endl;
+
+        }else{
+            if(*actIt != nullptr){
+                (*actIt)->doSomething();
+                actIt++;
+            }
+        }
     }
+    
+//    int actorListSize = actorList.size();
+//    for(int i = 0; i < actorListSize; i++){
+//        if(actorList[i]->getIsAlive() == false){
+//            cout << "i : " << i << endl;
+//            if(actorList[i] != nullptr){
+//                delete(actorList[i]);
+//                actorListSize--;
+//                continue;
+//            }
+//        }
+//        actorList[i]->doSomething();
+//    }
+    
+
+    
     if(getFinishedLevel()){
         playSound(SOUND_LEVEL_FINISHED);
         setFinishedLevel(false);
@@ -140,11 +171,11 @@ void StudentWorld::cleanUp()
 bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
-            if(sameActor != (*actIt) && abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
-                if((*actIt)->getPassable() == false){//if the destination object is not passable return true
-                    return true;
-                }
+        if(sameActor != (*actIt) && abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
+            if((*actIt)->getPassable() == false){//if the destination object is not passable return true
+                return true;
             }
+        }
         actIt++;
     }
     return false;
@@ -188,10 +219,15 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
     
 }
 
-//bool doesOverlapWithPlayer(Actor* goodie, double x, double y){
-////    if(){
-////
-////    }
-//    return false;
-//}
+bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
+    if(doesOverlap(goodie, playerPtr->getX(), playerPtr->getY())){
+        increaseScore(50);
+        goodie->setIsAlive(false);
+        playSound(SOUND_GOT_GOODIE);
+        playerPtr->incrementNumVaccines();
+        return true;
+    }
+    return false;
+}
+
 

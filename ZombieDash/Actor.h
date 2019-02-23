@@ -92,7 +92,7 @@ public:
     void setIsInfected(bool infectionStatus){
         m_isInfected = infectionStatus;
     }
-
+    
 private:
     int m_infectionCount;
     bool m_isInfected;
@@ -117,6 +117,15 @@ public:
     int getNumVaccines(){
         return m_numVaccines;
     }
+    void incrementNumVaccines(){
+        m_numVaccines++;
+    }
+    void incrementNumLandmines(){
+        m_numLandmines++;
+    }
+    void incrementNumFlames(){
+        m_numFlames++;
+    }
     
 private:
     int m_numLandmines;
@@ -135,7 +144,7 @@ public:
     virtual ~Wall(){}
     void doSomething(){}
 private:
-
+    
     
 };
 
@@ -150,7 +159,7 @@ public:
     virtual ~Exit(){}
     void doSomething();
 private:
-
+    
 };
 
 //class Citizen : public Human{
@@ -160,7 +169,7 @@ private:
 //    virtual ~Citizen(){}
 //    void doSomething(){}
 //private:
-//    
+//
 //};
 
 //
@@ -197,7 +206,6 @@ public:
         setCanBeInfected(false);
     }
     void doSomething();
-
 };
 //
 //class GasCanGoodie : public Actor{
@@ -227,3 +235,4 @@ public:
 //
 
 #endif // ACTOR_H_
+

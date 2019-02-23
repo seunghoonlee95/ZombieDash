@@ -9,17 +9,18 @@ using namespace std;
 class StudentWorld;
 // Students:  Add code to this file, Actor.h, StudentWorld.h, and StudentWorld.cpp
 
-void Penelope::doSomething(){    
+void Penelope::doSomething(){
     if(getIsAlive() == false){//check to see if she is still alive
         return;
     }
-
+    
+//    setIsInfected(true);
     if(getIsInfected()){
         setInfectionCount(getInfectionCount() + 1);
         if(getInfectionCount() == 500){
             setIsAlive(false);
             return;
-//            getWorld()->playSound(SOUND_PLAYER_DIE);
+            //            getWorld()->playSound(SOUND_PLAYER_DIE);
         }
     }
     int ch;
@@ -64,6 +65,8 @@ void VaccineGoodie::doSomething(){
     if(getIsAlive() == false){
         return;
     }
-//    getWorld()->doesOverlapWithPlayer(this, getX(), getY());
-    //if()
+    if(getWorld()->doesOverlapWithPlayer(this)){
+        
+    }
 }
+

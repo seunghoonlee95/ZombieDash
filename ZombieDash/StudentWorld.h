@@ -26,15 +26,15 @@ public:
     bool doesIntersect(Actor* sameActor, double x, double y);
     bool doesOverlap(Actor* sameActor, double x, double y);
     void escapeHumans(double exitX, double exitY);
-    bool doesOverlapWithPlayer(Actor* goodie, double x, double y);
-
+    bool doesOverlapWithPlayer(Actor* goodie);
+    
     bool getFinishedLevel(){
         return m_finishedLevel;
     }
     void setFinishedLevel(bool status){
         m_finishedLevel = status;
     }
-
+    
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
@@ -42,3 +42,4 @@ private:
 };
 
 #endif // STUDENTWORLD_H_
+
