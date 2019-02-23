@@ -16,7 +16,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), passable(false), m_isAlive(true)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), passable(false), m_isAlive(true), canBeBurned(true), m_canUseExit(false)
     {
     }
     virtual ~Actor(){
@@ -32,25 +32,71 @@ public:
     bool getIsAlive(){
         return m_isAlive;
     }
+    //Maybe not needed if kill() is used instead...
     void setIsAlive(bool status){
         m_isAlive = status;
     }
+    void kill(){
+        m_isAlive = false;
+    }
+    
+    bool getCanBeBurned(){
+        return canBeBurned;
+    }
+    
+    void setCanBeBurned(bool burnable){
+        canBeBurned = burnable;
+    }
+    
+    bool getCanUseExit(){
+        return m_canUseExit;
+    }
+    void setCanUseExit(bool exitUsable){
+        m_canUseExit = exitUsable;
+    }
+    
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
     bool passable;
     bool m_isAlive;
+    bool canBeBurned;
+    bool m_canUseExit;
     
 };
 
-class Penelope : public Actor{
+class Human : public Actor{
+public:
+    Human(StudentWorld* stdWorld, int imageID, double startX, double startY)
+    :Actor(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0), m_isInfected(false){
+        setCanUseExit(true);
+    }
+    virtual ~Human(){}
+    int getInfectionCount(){
+        return m_infectionCount;
+    }
+    void setInfectionCount(int infCount){
+        m_infectionCount = infCount;
+    }
+    bool getIsInfected(){
+        return m_isInfected;
+    }
+    void setIsInfected(bool infectionStatus){
+        m_isInfected = infectionStatus;
+    }
+
+private:
+    int m_infectionCount;
+    bool m_isInfected;
+};
+
+class Penelope : public Human{
 public:
     Penelope(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_PLAYER, startX, startY, right, 0, 1.0), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0), m_isInfected(false), m_infectionCount(0){
+    :Human(stdWorld, IID_PLAYER, startX, startY), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0){
         setIsAlive(true);
     }
     virtual ~Penelope(){
-        
     }
     void doSomething();
     
@@ -58,81 +104,92 @@ private:
     bool m_hasLandmines;
     int m_flameThrowerCharges;
     bool m_hasVaccine;
-    bool m_isInfected;
-    int m_infectionCount;
     
 };
 
 class Wall : public Actor{
 public:
     Wall(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
-    }
-    virtual ~Wall(){
-    }
+    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){}
+    virtual ~Wall(){}
     void doSomething(){}
 private:
 
     
 };
 
-//Comment out these for now.
-//class Exit : Actor{
+class Exit : public Actor{
+public:
+    Exit(StudentWorld* stdWorld, double startX, double startY)
+    :Actor(stdWorld, IID_EXIT, startX, startY, right, 1, 1.0){
+        setPassable(true);
+    }
+    virtual ~Exit(){}
+    void doSomething();
+private:
+
+};
+
+//class Citizen : public Human{
 //public:
-//    Exit();
-//    void doSomething();
-//
+//    Citizen(StudentWorld* stdWorld, double startX, double startY)
+//    :Human(stdWorld, IID_CITIZEN, startX, startY){}
+//    virtual ~Citizen(){}
+//    void doSomething(){}
+//private:
+//    
 //};
+
 //
-//class Pit : Actor{
+//class Pit : public Actor{
 //public:
 //    Pit();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //
-//class Flame : Actor{
+//class Flame : public Actor{
 //public:
 //    Flame();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //
-//class Vomit : Actor{
+//class Vomit : public Actor{
 //public:
 //    Vomit();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //
 
 
 // Make a Goodie class and derive classes(VaccineGoodie, GasCanGoodie, LandmineGoodie...)
-//class VaccineGoodie : Actor{
+//class VaccineGoodie : public Actor{
 //public:
 //    VaccineGoodie();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //
-//class GasCanGoodie : Actor{
+//class GasCanGoodie : public Actor{
 //public:
 //    GasCanGoodie();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //
-//class LandmineGoodie : Actor{
+//class LandmineGoodie : public Actor{
 //public:
 //    LandmineGoodie();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //
-//class Landmine : Actor{
+//class Landmine : public Actor{
 //public:
 //    Landmine();
-//    void doSomething();
+//    void doSomething(){}
 //
 //};
 //

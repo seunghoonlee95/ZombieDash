@@ -14,14 +14,13 @@ void Penelope::doSomething(){
         return;
     }
     
-    if(m_isInfected){
-        m_infectionCount++;
-        if(m_infectionCount == 500){
+    if(getIsInfected()){
+        setInfectionCount(getInfectionCount() + 1);
+        if(getInfectionCount() == 500){
             setIsAlive(false);
             getWorld()->playSound(SOUND_PLAYER_DIE);
         }
     }
-    
     int ch;
     if(getWorld()->getKey(ch)){
         //user hit a key during this tick!
@@ -52,6 +51,10 @@ void Penelope::doSomething(){
                 }
                 break;
         }
-
     }
+}
+
+void Exit::doSomething(){
+    getWorld()->escapeHumans(getX(), getY());
+    
 }

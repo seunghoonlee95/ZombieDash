@@ -23,13 +23,27 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-    bool doesIntersect(Actor* sameActor, int x, int y);
-    bool doesOverlap(int x, int y);
+    bool doesIntersect(Actor* sameActor, double x, double y);
+    bool doesOverlap(Actor* sameActor, double x, double y);
+    void escapeHumans(double exitX, double exitY);
+    void changeScore(int val){
+        m_userScore += val;
+    }
+    int getUserScore(){
+        return m_userScore;
+    }
+    bool getFinishedLevel(){
+        return m_finishedLevel;
+    }
+    void setFinishedLevel(bool status){
+        m_finishedLevel = status;
+    }
 
-    int testInt = 100;
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
+    int m_userScore;
+    bool m_finishedLevel;
 };
 
 #endif // STUDENTWORLD_H_
