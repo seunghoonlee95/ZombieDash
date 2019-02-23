@@ -19,49 +19,21 @@ public:
     :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true)
     {
     }
-    virtual ~Actor(){
-    }
+    virtual ~Actor(){}
     virtual void doSomething()=0;
     
-    bool getPassable(){
-        return m_passable;
-    }
-    void setPassable(bool passVal){
-        m_passable = passVal;
-    }
-    bool getIsAlive(){
-        return m_isAlive;
-    }
+    bool getPassable(){return m_passable;}
+    void setPassable(bool passVal){m_passable = passVal;}
+    bool getIsAlive(){return m_isAlive;}
     //Maybe not needed if kill() is used instead...
-    void setIsAlive(bool status){
-        m_isAlive = status;
-    }
-    void kill(){
-        m_isAlive = false;
-    }
-    
-    bool getCanBeBurned(){
-        return m_canBeBurned;
-    }
-    
-    void setCanBeBurned(bool burnable){
-        m_canBeBurned = burnable;
-    }
-    
-    bool getCanUseExit(){
-        return m_canUseExit;
-    }
-    void setCanUseExit(bool exitUsable){
-        m_canUseExit = exitUsable;
-    }
-    
-    bool getCanBeInfected(){
-        return m_canBeInfected;
-    }
-    void setCanBeInfected(bool infectable){
-        m_canBeInfected = infectable;
-    }
-    
+    void setIsAlive(bool status){m_isAlive = status;}
+    void kill(){m_isAlive = false;}
+    bool getCanBeBurned(){return m_canBeBurned;}
+    void setCanBeBurned(bool burnable){m_canBeBurned = burnable;}
+    bool getCanUseExit(){return m_canUseExit;}
+    void setCanUseExit(bool exitUsable){m_canUseExit = exitUsable;}
+    bool getCanBeInfected(){return m_canBeInfected;}
+    void setCanBeInfected(bool infectable){m_canBeInfected = infectable;}
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
@@ -80,18 +52,10 @@ public:
         setCanUseExit(true);
     }
     virtual ~Human(){}
-    int getInfectionCount(){
-        return m_infectionCount;
-    }
-    void setInfectionCount(int infCount){
-        m_infectionCount = infCount;
-    }
-    bool getIsInfected(){
-        return m_isInfected;
-    }
-    void setIsInfected(bool infectionStatus){
-        m_isInfected = infectionStatus;
-    }
+    int getInfectionCount(){return m_infectionCount;}
+    void setInfectionCount(int infCount){m_infectionCount = infCount;}
+    bool getIsInfected(){return m_isInfected;}
+    void setIsInfected(bool infectionStatus){m_isInfected = infectionStatus;}
     
 private:
     int m_infectionCount;
@@ -103,29 +67,17 @@ public:
     Penelope(StudentWorld* stdWorld, double startX, double startY)
     :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(0), m_numFlames(0), m_numVaccines(0){
         setIsAlive(true);
+//        setIsInfected(true);
     }
-    virtual ~Penelope(){
-    }
+    virtual ~Penelope(){}
     void doSomething();
     
-    int getNumLandmines(){
-        return m_numLandmines;
-    }
-    int getNumFlames(){
-        return m_numFlames;
-    }
-    int getNumVaccines(){
-        return m_numVaccines;
-    }
-    void incrementNumVaccines(){
-        m_numVaccines++;
-    }
-    void incrementNumLandmines(){
-        m_numLandmines++;
-    }
-    void incrementNumFlames(){
-        m_numFlames++;
-    }
+    int getNumLandmines(){return m_numLandmines;}
+    int getNumFlames(){return m_numFlames;}
+    int getNumVaccines(){return m_numVaccines;}
+    void changeNumVaccines(int num){m_numVaccines += num;}
+    void changeNumLandmines(int num){m_numLandmines += num;}
+    void changeNumFlames(int num){m_numFlames += num;}
     
 private:
     int m_numLandmines;
@@ -180,12 +132,23 @@ private:
 //
 //};
 //
-//class Flame : public Actor{
-//public:
-//    Flame();
-//    void doSomething(){}
-//
-//};
+class Flame : public Actor{
+public:
+    Flame(StudentWorld* stdWorld, double startX, double startY, Direction dir)
+    :Actor(stdWorld, IID_FLAME, startX, startY, dir, 1, 1.0), m_ticksPassed(0)
+    {
+        setCanBeInfected(false);
+        setCanBeBurned(false);
+        setPassable(true);
+    }
+    
+    
+    void doSomething();
+    void setTicksPassed(int tick){m_ticksPassed = tick;}
+    int getTicksPassed(){return m_ticksPassed;}
+private:
+    int m_ticksPassed;
+};
 //
 //class Vomit : public Actor{
 //public:
@@ -207,13 +170,18 @@ public:
     }
     void doSomething();
 };
-//
-//class GasCanGoodie : public Actor{
-//public:
-//    GasCanGoodie();
-//    void doSomething(){}
-//
-//};
+
+class GasCanGoodie : public Actor{
+public:
+    GasCanGoodie(StudentWorld* stdWorld, double startX, double startY)
+    :Actor(stdWorld, IID_GAS_CAN_GOODIE, startX, startY, right, 1, 1.0)
+    {
+        setPassable(true);
+        setCanBeInfected(true);
+    }
+    void doSomething();
+
+};
 //
 //class LandmineGoodie : public Actor{
 //public:

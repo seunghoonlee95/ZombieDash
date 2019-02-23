@@ -19,11 +19,10 @@ GameWorld* createStudentWorld(string assetPath)
 
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
-StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
+StudentWorld::StudentWorld(string assetPath)
+: GameWorld(assetPath), playerPtr(nullptr), m_finishedLevel(false), m_gotVaccine(false), m_gotFlames(false)
 {
     actorList.reserve(256);
-    playerPtr = nullptr;
-    m_finishedLevel = false;
 }
 
 int StudentWorld::init(){
@@ -84,6 +83,9 @@ int StudentWorld::init(){
                     case Level::vaccine_goodie:
                         actorList.push_back(new VaccineGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                         break;
+                    case Level::gas_can_goodie:
+                        actorList.push_back(new GasCanGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        break;
                 }
             }
         }
@@ -104,18 +106,22 @@ int StudentWorld::move(){
         decLives();
         return GWSTATUS_PLAYER_DIED;
     }
-    int actorListSize = actorList.size();
+    if(getGotVaccine()){
+        setGotVaccine(false);
+        playerPtr->changeNumVaccines(1);
+    }
+    if(getGotFlames()){
+        setGotFlames(false);
+        playerPtr->changeNumFlames(5);
+    }
+    
+    
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         if((*actIt)->getIsAlive() == false){
-            //delete *actIt;
-            cout << "gonna erase goodie!" << endl;
-            cout << "actorListSize : " << actorListSize << endl;
             delete *actIt;
             actorList.erase(actIt);
             actIt++;
-            cout << "erased goodie!" << endl;
-            cout << "actorListSize : " << actorListSize << endl;
 
         }else{
             if(*actIt != nullptr){
@@ -124,27 +130,12 @@ int StudentWorld::move(){
             }
         }
     }
-    
-//    int actorListSize = actorList.size();
-//    for(int i = 0; i < actorListSize; i++){
-//        if(actorList[i]->getIsAlive() == false){
-//            cout << "i : " << i << endl;
-//            if(actorList[i] != nullptr){
-//                delete(actorList[i]);
-//                actorListSize--;
-//                continue;
-//            }
-//        }
-//        actorList[i]->doSomething();
-//    }
-    
 
-    
     if(getFinishedLevel()){
         playSound(SOUND_LEVEL_FINISHED);
         setFinishedLevel(false);
         
-        //What do I do when the player completes all 6 stages????
+        //Whhen the player completes all 6 stages..
         if(getLevel() == 6){
             return GWSTATUS_PLAYER_WON;
         }
@@ -183,15 +174,15 @@ bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
 
 //The distance between the center points should be less than or equal to 10 pixels..
 bool StudentWorld::doesOverlap(Actor *sameActor, double otherX, double otherY){
-    vector<Actor*>::iterator actIt = actorList.begin();
-    while(actIt != actorList.end()){
+//    vector<Actor*>::iterator actIt = actorList.begin();
+//    while(actIt != actorList.end()){
         double distance;
         distance = sqrt(pow(sameActor->getX() - otherX, 2) + pow(sameActor->getY() - otherY, 2));
-        if(sameActor != (*actIt) && distance <= 10.0){
+        if(/*sameActor != (*actIt) && */distance <= 10.0){
             return true;
         }
-        actIt++;
-    }
+//        actIt++;
+//    }
     return false;
 }
 
@@ -200,7 +191,7 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
     
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
-        if((*actIt)->getCanUseExit()){
+        if((*actIt)->getCanUseExit()){//only citizen can use exit among ActorList.
             if(doesOverlap(*actIt, exitX, exitY)){//when exit overlaps with citizen, free the citizen
                 increaseScore(500);
                 (*actIt)->kill();
@@ -221,10 +212,6 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
 
 bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
     if(doesOverlap(goodie, playerPtr->getX(), playerPtr->getY())){
-        increaseScore(50);
-        goodie->setIsAlive(false);
-        playSound(SOUND_GOT_GOODIE);
-        playerPtr->incrementNumVaccines();
         return true;
     }
     return false;

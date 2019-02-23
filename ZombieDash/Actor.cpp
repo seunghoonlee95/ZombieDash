@@ -14,7 +14,6 @@ void Penelope::doSomething(){
         return;
     }
     
-//    setIsInfected(true);
     if(getIsInfected()){
         setInfectionCount(getInfectionCount() + 1);
         if(getInfectionCount() == 500){
@@ -52,6 +51,15 @@ void Penelope::doSomething(){
                     moveTo(getX(), getY() - 4);
                 }
                 break;
+            case KEY_PRESS_ENTER:
+                if(getNumVaccines() >= 1){
+                    setIsInfected(false);
+                    changeNumVaccines(-1);
+                    setInfectionCount(0);
+                }
+                break;
+            case KEY_PRESS_SPACE:
+                break;
         }
     }
 }
@@ -66,7 +74,40 @@ void VaccineGoodie::doSomething(){
         return;
     }
     if(getWorld()->doesOverlapWithPlayer(this)){
-        
+        getWorld()->increaseScore(50);
+        setIsAlive(false);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        //Inform the StudentWorld Object that Penelope is to receive one dose of vaccine.
+        getWorld()->setGotVaccine(true);
     }
+}
+
+void GasCanGoodie::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    if(getWorld()->doesOverlapWithPlayer(this)){
+        getWorld()->increaseScore(50);
+        setIsAlive(false);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        //Inform the StudentWorld Object that Penelope is to receive 5 flames.
+        getWorld()->setGotFlames(true);
+    }
+}
+
+void Flame::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    if(getTicksPassed() == 2){
+        setIsAlive(false);
+        return;
+    }
+    
+    
+    
+    setTicksPassed(getTicksPassed() + 1);
+
+    
 }
 
