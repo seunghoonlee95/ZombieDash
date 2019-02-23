@@ -27,7 +27,8 @@ public:
     bool doesOverlap(Actor* sameActor, double x, double y);
     void escapeHumans(double exitX, double exitY);
     bool doesOverlapWithPlayer(Actor* goodie);
-    void blastFire(double flameX);
+    void blastFlame();
+    void explodeMine(Actor* landMinePtr, double mineX, double mineY);
     
     void setGotVaccine(bool status){m_gotVaccine = status;}
     bool getGotVaccine(){return m_gotVaccine;}

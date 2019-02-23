@@ -59,6 +59,11 @@ void Penelope::doSomething(){
                 }
                 break;
             case KEY_PRESS_SPACE:
+                if(getNumFlames() > 0){
+                    changeNumFlames(-1);
+                    getWorld()->playSound(SOUND_PLAYER_FIRE);
+                    getWorld()->blastFlame();
+                }
                 break;
         }
     }
@@ -99,11 +104,17 @@ void Flame::doSomething(){
     if(getIsAlive() == false){
         return;
     }
+    cout << "tick : " << getTicksPassed() << endl;
     if(getTicksPassed() == 2){
         setIsAlive(false);
         return;
     }
-    
+//    if(getDirection() == up){
+//        for(int i = 0; i < 3; i++){
+//            
+//        }
+//    }
+
     
     
     setTicksPassed(getTicksPassed() + 1);

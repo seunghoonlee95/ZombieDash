@@ -119,10 +119,11 @@ int StudentWorld::move(){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         if((*actIt)->getIsAlive() == false){
-            delete *actIt;
-            actorList.erase(actIt);
-            actIt++;
-
+//            if(*actIt != nullptr){
+                delete *actIt;
+                actorList.erase(actIt);
+              //  actIt++;      //this was causing the error!!
+//            }
         }else{
             if(*actIt != nullptr){
                 (*actIt)->doSomething();
@@ -163,7 +164,7 @@ bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         if(sameActor != (*actIt) && abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
-            if((*actIt)->getPassable() == false){//if the destination object is not passable return true
+            if((*actIt)->getPassable() == false){//if the destination object is not passable(wall or citizen only among actorList) return true
                 return true;
             }
         }
@@ -216,5 +217,23 @@ bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
     }
     return false;
 }
+
+void StudentWorld::blastFlame(){
+//    vector<Actor*>::iterator actIt = actorList.begin();
+        if(playerPtr->getDirection() == GraphObject::up){
+            for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
+                cout << "i : " << i << endl;
+                actorList.push_back(new Flame(this, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT, GraphObject::up));
+            }
+        }
+        
+//        if((*actIt)->getCanBeBurned() == true){
+//        }
+        
+    
+
+}
+
+
 
 
