@@ -93,24 +93,36 @@ private:
 class Penelope : public Human{
 public:
     Penelope(StudentWorld* stdWorld, double startX, double startY)
-    :Human(stdWorld, IID_PLAYER, startX, startY), m_hasLandmines(false), m_flameThrowerCharges(0), m_hasVaccine(0){
+    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(0), m_numFlames(0), m_numVaccines(0){
         setIsAlive(true);
     }
     virtual ~Penelope(){
     }
     void doSomething();
     
+    int getNumLandmines(){
+        return m_numLandmines;
+    }
+    int getNumFlames(){
+        return m_numFlames;
+    }
+    int getNumVaccines(){
+        return m_numVaccines;
+    }
+    
 private:
-    bool m_hasLandmines;
-    int m_flameThrowerCharges;
-    bool m_hasVaccine;
+    int m_numLandmines;
+    int m_numFlames;
+    int m_numVaccines;
     
 };
 
 class Wall : public Actor{
 public:
     Wall(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){}
+    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
+        setCanBeBurned(false);
+    }
     virtual ~Wall(){}
     void doSomething(){}
 private:
@@ -123,6 +135,7 @@ public:
     Exit(StudentWorld* stdWorld, double startX, double startY)
     :Actor(stdWorld, IID_EXIT, startX, startY, right, 1, 1.0){
         setPassable(true);
+        setCanBeBurned(false);
     }
     virtual ~Exit(){}
     void doSomething();
@@ -165,12 +178,16 @@ private:
 
 
 // Make a Goodie class and derive classes(VaccineGoodie, GasCanGoodie, LandmineGoodie...)
-//class VaccineGoodie : public Actor{
-//public:
-//    VaccineGoodie();
-//    void doSomething(){}
-//
-//};
+class VaccineGoodie : public Actor{
+public:
+    VaccineGoodie(StudentWorld* stdWorld, double startX, double startY)
+    :Actor(stdWorld, IID_VACCINE_GOODIE, startX, startY, right, 1, 1.0)
+    {
+        setPassable(true);
+    }
+    void doSomething(){}
+
+};
 //
 //class GasCanGoodie : public Actor{
 //public:

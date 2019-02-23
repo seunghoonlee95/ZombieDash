@@ -13,12 +13,13 @@ void Penelope::doSomething(){
     if(getIsAlive() == false){//check to see if she is still alive
         return;
     }
-    
+
     if(getIsInfected()){
         setInfectionCount(getInfectionCount() + 1);
         if(getInfectionCount() == 500){
             setIsAlive(false);
-            getWorld()->playSound(SOUND_PLAYER_DIE);
+            return;
+//            getWorld()->playSound(SOUND_PLAYER_DIE);
         }
     }
     int ch;

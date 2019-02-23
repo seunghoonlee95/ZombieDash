@@ -23,7 +23,6 @@ StudentWorld::StudentWorld(string assetPath) : GameWorld(assetPath)
 {
     actorList.reserve(256);
     playerPtr = nullptr;
-    m_userScore = 0;
     m_finishedLevel = false;
 }
 
@@ -90,7 +89,18 @@ int StudentWorld::init(){
 }
 
 int StudentWorld::move(){
+    
+    string gameStatus = "";
+    gameStatus = "Score: " + to_string(getScore()) + "  Level: " + to_string(getLevel()) + "  Lives: " + to_string(getLives()) + "  Vaccines: " + to_string(playerPtr->getNumVaccines()) + "  Flames: " + to_string(playerPtr->getNumFlames()) + "  Mines: " + to_string(playerPtr->getNumLandmines()) + "  Infected: " + to_string(playerPtr->getInfectionCount());
+    
+    setGameStatText(gameStatus);
+    
     playerPtr->doSomething();
+    if(playerPtr->getIsAlive() == false){
+        playSound(SOUND_PLAYER_DIE);
+        decLives();
+        return GWSTATUS_PLAYER_DIED;
+    }
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         (*actIt)->doSomething();
@@ -158,7 +168,7 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
     while(actIt != actorList.end()){
         if((*actIt)->getCanUseExit()){
             if(doesOverlap(*actIt, exitX, exitY)){//when exit overlaps with citizen, free the citizen
-                changeScore(500);
+                increaseScore(500);
                 (*actIt)->kill();
                 playSound(SOUND_CITIZEN_SAVED);
             }

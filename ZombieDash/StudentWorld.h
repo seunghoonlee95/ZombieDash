@@ -26,12 +26,7 @@ public:
     bool doesIntersect(Actor* sameActor, double x, double y);
     bool doesOverlap(Actor* sameActor, double x, double y);
     void escapeHumans(double exitX, double exitY);
-    void changeScore(int val){
-        m_userScore += val;
-    }
-    int getUserScore(){
-        return m_userScore;
-    }
+
     bool getFinishedLevel(){
         return m_finishedLevel;
     }
@@ -42,7 +37,6 @@ public:
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
-    int m_userScore;
     bool m_finishedLevel;
 };
 
