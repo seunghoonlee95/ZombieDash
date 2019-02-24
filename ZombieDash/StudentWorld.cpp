@@ -20,7 +20,7 @@ GameWorld* createStudentWorld(string assetPath)
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
 StudentWorld::StudentWorld(string assetPath)
-: GameWorld(assetPath), playerPtr(nullptr), m_finishedLevel(false), m_gotVaccine(false), m_gotFlames(false)
+: GameWorld(assetPath), playerPtr(nullptr), m_finishedLevel(false) /*, m_gotVaccine(false), m_gotFlames(false)*/
 {
     actorList.reserve(256);
 }
@@ -31,6 +31,13 @@ int StudentWorld::init(){
     level = getLevel();
     //    cout << "level : " << level << endl;
     string levelFile;
+    if(level < 0){
+        return GWSTATUS_LEVEL_ERROR; // Not sure!!
+    }else if(level < 10){
+        levelFile = "level0" + to_string(level) + ".txt";
+    }else{
+        levelFile = "level" + to_string(level) + ".txt";
+    }
     
     switch(level){
         case 1:
@@ -86,12 +93,17 @@ int StudentWorld::init(){
                     case Level::gas_can_goodie:
                         actorList.push_back(new GasCanGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                         break;
+                    case Level::landmine_goodie:
+                        actorList.push_back(new LandmineGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        break;
                 }
             }
         }
     }
     return GWSTATUS_CONTINUE_GAME;
 }
+
+
 
 int StudentWorld::move(){
     
@@ -106,14 +118,15 @@ int StudentWorld::move(){
         decLives();
         return GWSTATUS_PLAYER_DIED;
     }
-    if(getGotVaccine()){
-        setGotVaccine(false);
-        playerPtr->changeNumVaccines(1);
-    }
-    if(getGotFlames()){
-        setGotFlames(false);
-        playerPtr->changeNumFlames(5);
-    }
+    
+//    if(getGotVaccine()){
+//        setGotVaccine(false);
+//        playerPtr->changeNumVaccines(1);
+//    }
+//    if(getGotFlames()){
+//        setGotFlames(false);
+//        playerPtr->changeNumFlames(5);
+//    }
     
     
     vector<Actor*>::iterator actIt = actorList.begin();
@@ -174,12 +187,13 @@ bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
 }
 
 //The distance between the center points should be less than or equal to 10 pixels..
-bool StudentWorld::doesOverlap(Actor *sameActor, double otherX, double otherY){
+bool StudentWorld::doesOverlap(Actor *actorPtr, double otherX, double otherY){
 //    vector<Actor*>::iterator actIt = actorList.begin();
 //    while(actIt != actorList.end()){
         double distance;
-        distance = sqrt(pow(sameActor->getX() - otherX, 2) + pow(sameActor->getY() - otherY, 2));
-        if(/*sameActor != (*actIt) && */distance <= 10.0){
+        distance = sqrt(pow(actorPtr->getX() - otherX, 2) + pow(actorPtr->getY() - otherY, 2));
+        if(distance <= 10.0){
+//            cout << "distance : " << distance << endl;
             return true;
         }
 //        actIt++;
@@ -208,7 +222,6 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
             setFinishedLevel(true);
         }
     }
-    
 }
 
 bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
@@ -219,21 +232,94 @@ bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
 }
 
 void StudentWorld::blastFlame(){
-//    vector<Actor*>::iterator actIt = actorList.begin();
-        if(playerPtr->getDirection() == GraphObject::up){
-            for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
-                cout << "i : " << i << endl;
-                actorList.push_back(new Flame(this, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT, GraphObject::up));
+    bool isBlocked = false;
+    if(playerPtr->getDirection() == GraphObject::up){
+        for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
+            vector<Actor*>::iterator actIt = actorList.begin();
+            while(actIt != actorList.end()){
+                if((*actIt)->getCanBeBurned() == false && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
+                    //when flame overlaps with an exit or wall
+                    isBlocked = true;
+                    break;
+                }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
+                    (*actIt)->setIsAlive(false);
+                }
+                actIt++;
             }
+            if(isBlocked == true){
+                isBlocked = false;
+                break;
+            }
+            actorList.push_back(new Flame(this, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT, GraphObject::up));
         }
-        
-//        if((*actIt)->getCanBeBurned() == true){
-//        }
-        
-    
-
+    }else if(playerPtr->getDirection() == GraphObject::down){
+        for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
+            vector<Actor*>::iterator actIt = actorList.begin();
+            while(actIt != actorList.end()){
+                if((*actIt)->getCanBeBurned() == false && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
+                    //when flame overlaps with an exit or wall
+                    isBlocked = true;
+                    break;
+                }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
+                    (*actIt)->setIsAlive(false);
+                }
+                actIt++;
+            }
+            if(isBlocked == true){
+                isBlocked = false;
+                break;
+            }
+            actorList.push_back(new Flame(this, playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT, GraphObject::up));
+        }
+    }else if(playerPtr->getDirection() == GraphObject::left){
+        for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
+            vector<Actor*>::iterator actIt = actorList.begin();
+            while(actIt != actorList.end()){
+                if((*actIt)->getCanBeBurned() == false && doesOverlap(*actIt, playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
+                    //when flame overlaps with an exit or wall
+                    isBlocked = true;
+                    break;
+                }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
+                    (*actIt)->setIsAlive(false);
+                }
+                actIt++;
+            }
+            if(isBlocked == true){
+                isBlocked = false;
+                break;
+            }
+            actorList.push_back(new Flame(this, playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY(), GraphObject::up));
+        }
+    }else if(playerPtr->getDirection() == GraphObject::right){
+        for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
+            vector<Actor*>::iterator actIt = actorList.begin();
+            while(actIt != actorList.end()){
+                if((*actIt)->getCanBeBurned() == false && doesOverlap(*actIt, playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
+                    //when flame overlaps with an exit or wall
+                    isBlocked = true;
+                    break;
+                }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
+                    (*actIt)->setIsAlive(false);
+                }
+                actIt++;
+            }
+            if(isBlocked == true){
+                isBlocked = false;
+                break;
+            }
+            actorList.push_back(new Flame(this, playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY(), GraphObject::up));
+        }
+    }
 }
 
 
-
+void StudentWorld::incrementVaccine(){
+    playerPtr->changeNumVaccines(1);
+}
+void StudentWorld::incrementFlameCount(){
+    playerPtr->changeNumFlames(5);
+}
+void StudentWorld::incrementLandmineCount(){
+    playerPtr->changeNumLandmines(2);
+}
 

@@ -37,6 +37,7 @@ public:
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
+    
     bool m_passable;
     bool m_isAlive;
     bool m_canBeBurned;
@@ -45,10 +46,119 @@ private:
     
 };
 
-class Human : public Actor{
+class Wall : public Actor{
+public:
+    Wall(StudentWorld* stdWorld, double startX, double startY)
+    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
+        setCanBeBurned(false);
+        setCanBeInfected(false);
+    }
+    virtual ~Wall(){}
+    void doSomething(){}
+private:
+};
+
+class ActivatingObject : public Actor{
+public:
+    ActivatingObject(StudentWorld* stdWorld, int imageID, double startX, double startY, Direction dir, int depth, double size)
+    :Actor(stdWorld, imageID, startX, startY, dir, depth, size){
+    }
+    virtual ~ActivatingObject(){}
+};
+
+class Exit : public ActivatingObject{
+public:
+    Exit(StudentWorld* stdWorld, double startX, double startY)
+    :ActivatingObject(stdWorld, IID_EXIT, startX, startY, right, 1, 1.0){
+        setPassable(true);
+        setCanBeBurned(false);
+        setCanBeInfected(false);
+    }
+    virtual ~Exit(){}
+    void doSomething();
+private:
+    
+};
+
+class Flame : public ActivatingObject{
+public:
+    Flame(StudentWorld* stdWorld, double startX, double startY, Direction dir)
+    :ActivatingObject(stdWorld, IID_FLAME, startX, startY, dir, 1, 1.0), m_ticksPassed(0)
+    {
+        setCanBeInfected(false);
+        setCanBeBurned(false);
+        setPassable(true);
+    }
+    virtual ~Flame(){}
+    void doSomething();
+    void setTicksPassed(int tick){m_ticksPassed = tick;}
+    int getTicksPassed(){return m_ticksPassed;}
+private:
+    int m_ticksPassed;
+};
+
+class Goodie : public ActivatingObject{
+public:
+    Goodie(StudentWorld* stdWorld,int imageID, double startX, double startY, Direction dir, int depth, double size)
+    :ActivatingObject(stdWorld, imageID, startX, startY, dir, depth, size){
+        setCanBeBurned(true);
+        setCanBeInfected(false);
+        setPassable(true);
+    }
+    virtual ~Goodie(){}
+    void pickUp();
+    virtual void grantSpecificGoodieReward() = 0;
+};
+
+class VaccineGoodie : public Goodie{
+public:
+    VaccineGoodie(StudentWorld* stdWorld, double startX, double startY)
+    :Goodie(stdWorld, IID_VACCINE_GOODIE, startX, startY, right, 1, 1.0)
+    {
+
+    }
+    virtual ~VaccineGoodie(){}
+    void doSomething();
+    virtual void grantSpecificGoodieReward();
+};
+
+class GasCanGoodie : public Goodie{
+public:
+    GasCanGoodie(StudentWorld* stdWorld, double startX, double startY)
+    :Goodie(stdWorld, IID_GAS_CAN_GOODIE, startX, startY, right, 1, 1.0)
+    {
+
+    }
+    virtual ~GasCanGoodie(){}
+    void doSomething();
+    virtual void grantSpecificGoodieReward();
+};
+
+class LandmineGoodie : public Goodie{
+public:
+    LandmineGoodie(StudentWorld* stdWorld, double startX, double startY)
+    :Goodie(stdWorld, IID_LANDMINE_GOODIE, startX, startY, right, 1, 1.0)
+    {
+
+    }
+    virtual ~LandmineGoodie(){}
+    void doSomething();
+    virtual void grantSpecificGoodieReward();
+};
+
+
+class Agent : public Actor{
+public:
+    Agent(StudentWorld* stdWorld,int imageID, double startX, double startY, Direction dir, int depth, double size)
+    :Actor(stdWorld, imageID, startX, startY, dir, depth, size){
+    }
+    virtual ~Agent(){}
+};
+
+class Human : public Agent{
 public:
     Human(StudentWorld* stdWorld, int imageID, double startX, double startY)
-    :Actor(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0), m_isInfected(false){
+    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0), m_isInfected(false){
         setCanUseExit(true);
     }
     virtual ~Human(){}
@@ -65,9 +175,8 @@ private:
 class Penelope : public Human{
 public:
     Penelope(StudentWorld* stdWorld, double startX, double startY)
-    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(0), m_numFlames(0), m_numVaccines(0){
+    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(0), m_numFlames(100), m_numVaccines(0){
         setIsAlive(true);
-//        setIsInfected(true);
     }
     virtual ~Penelope(){}
     void doSomething();
@@ -86,33 +195,9 @@ private:
     
 };
 
-class Wall : public Actor{
-public:
-    Wall(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
-        setCanBeBurned(false);
-        setCanBeInfected(false);
-    }
-    virtual ~Wall(){}
-    void doSomething(){}
-private:
-    
-    
-};
 
-class Exit : public Actor{
-public:
-    Exit(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_EXIT, startX, startY, right, 1, 1.0){
-        setPassable(true);
-        setCanBeBurned(false);
-        setCanBeInfected(false);
-    }
-    virtual ~Exit(){}
-    void doSomething();
-private:
-    
-};
+
+
 
 //class Citizen : public Human{
 //public:
@@ -132,23 +217,7 @@ private:
 //
 //};
 //
-class Flame : public Actor{
-public:
-    Flame(StudentWorld* stdWorld, double startX, double startY, Direction dir)
-    :Actor(stdWorld, IID_FLAME, startX, startY, dir, 1, 1.0), m_ticksPassed(0)
-    {
-        setCanBeInfected(false);
-        setCanBeBurned(false);
-        setPassable(true);
-    }
-    
-    
-    void doSomething();
-    void setTicksPassed(int tick){m_ticksPassed = tick;}
-    int getTicksPassed(){return m_ticksPassed;}
-private:
-    int m_ticksPassed;
-};
+
 //
 //class Vomit : public Actor{
 //public:
@@ -159,29 +228,7 @@ private:
 //
 
 
-// Make a Goodie class and derive classes(VaccineGoodie, GasCanGoodie, LandmineGoodie...)
-class VaccineGoodie : public Actor{
-public:
-    VaccineGoodie(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_VACCINE_GOODIE, startX, startY, right, 1, 1.0)
-    {
-        setPassable(true);
-        setCanBeInfected(false);
-    }
-    void doSomething();
-};
 
-class GasCanGoodie : public Actor{
-public:
-    GasCanGoodie(StudentWorld* stdWorld, double startX, double startY)
-    :Actor(stdWorld, IID_GAS_CAN_GOODIE, startX, startY, right, 1, 1.0)
-    {
-        setPassable(true);
-        setCanBeInfected(true);
-    }
-    void doSomething();
-
-};
 //
 //class LandmineGoodie : public Actor{
 //public:

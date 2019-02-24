@@ -69,56 +69,67 @@ void Penelope::doSomething(){
     }
 }
 
+void Goodie::pickUp(){
+    if(getWorld()->doesOverlapWithPlayer(this)){
+        getWorld()->increaseScore(50);
+        setIsAlive(false);
+        getWorld()->playSound(SOUND_GOT_GOODIE);
+        grantSpecificGoodieReward();
+    }
+    
+}
+
+void VaccineGoodie::grantSpecificGoodieReward(){
+//    getWorld()->setGotVaccine(true);
+    getWorld()->incrementVaccine();
+}
+
+void GasCanGoodie::grantSpecificGoodieReward(){
+//    getWorld()->setGotFlames(true);
+    getWorld()->incrementFlameCount();
+}
+
+void LandmineGoodie::grantSpecificGoodieReward(){
+    getWorld()->incrementLandmineCount();
+}
+
+
 void Exit::doSomething(){
     getWorld()->escapeHumans(getX(), getY());
-    
 }
 
 void VaccineGoodie::doSomething(){
     if(getIsAlive() == false){
         return;
     }
-    if(getWorld()->doesOverlapWithPlayer(this)){
-        getWorld()->increaseScore(50);
-        setIsAlive(false);
-        getWorld()->playSound(SOUND_GOT_GOODIE);
-        //Inform the StudentWorld Object that Penelope is to receive one dose of vaccine.
-        getWorld()->setGotVaccine(true);
-    }
+    pickUp();
 }
 
 void GasCanGoodie::doSomething(){
     if(getIsAlive() == false){
         return;
     }
-    if(getWorld()->doesOverlapWithPlayer(this)){
-        getWorld()->increaseScore(50);
-        setIsAlive(false);
-        getWorld()->playSound(SOUND_GOT_GOODIE);
-        //Inform the StudentWorld Object that Penelope is to receive 5 flames.
-        getWorld()->setGotFlames(true);
+    pickUp();
+}
+
+void LandmineGoodie::doSomething(){
+    if(getIsAlive() == false){
+        return;
     }
+    pickUp();
 }
 
 void Flame::doSomething(){
     if(getIsAlive() == false){
         return;
     }
-    cout << "tick : " << getTicksPassed() << endl;
+//    cout << "tick : " << getTicksPassed() << endl;
     if(getTicksPassed() == 2){
         setIsAlive(false);
         return;
     }
-//    if(getDirection() == up){
-//        for(int i = 0; i < 3; i++){
-//            
-//        }
-//    }
-
     
     
     setTicksPassed(getTicksPassed() + 1);
-
-    
 }
 

@@ -30,20 +30,24 @@ public:
     void blastFlame();
     void explodeMine(Actor* landMinePtr, double mineX, double mineY);
     
-    void setGotVaccine(bool status){m_gotVaccine = status;}
-    bool getGotVaccine(){return m_gotVaccine;}
+//    void setGotVaccine(bool status){m_gotVaccine = status;}
+//    bool getGotVaccine(){return m_gotVaccine;}
     bool getFinishedLevel(){return m_finishedLevel;}
     void setFinishedLevel(bool status){m_finishedLevel = status;}
-    bool getGotFlames(){return m_gotFlames;}
-    void setGotFlames(bool status){m_gotFlames = status;}
+//    bool getGotFlames(){return m_gotFlames;}
+//    void setGotFlames(bool status){m_gotFlames = status;}
+    void incrementVaccine();
+    void incrementFlameCount();
+    void incrementLandmineCount();
+
     
     
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
     bool m_finishedLevel;
-    bool m_gotVaccine;
-    bool m_gotFlames;
+//    bool m_gotVaccine;
+//    bool m_gotFlames;
 };
 
 #endif // STUDENTWORLD_H_
