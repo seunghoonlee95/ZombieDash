@@ -188,22 +188,17 @@ bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
 
 //The distance between the center points should be less than or equal to 10 pixels..
 bool StudentWorld::doesOverlap(Actor *actorPtr, double otherX, double otherY){
-//    vector<Actor*>::iterator actIt = actorList.begin();
-//    while(actIt != actorList.end()){
         double distance;
         distance = sqrt(pow(actorPtr->getX() - otherX, 2) + pow(actorPtr->getY() - otherY, 2));
         if(distance <= 10.0){
 //            cout << "distance : " << distance << endl;
             return true;
         }
-//        actIt++;
-//    }
     return false;
 }
 
 void StudentWorld::escapeHumans(double exitX, double exitY){
     bool freedAllCitizens = true;
-    
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         if((*actIt)->getCanUseExit()){//only citizen can use exit among ActorList.
@@ -224,11 +219,49 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
     }
 }
 
+void StudentWorld::explodeMine(Actor* minePtr, bool damagedByFlame){
+    if(doesOverlap(playerPtr, minePtr->getX(), minePtr->getY()) || damagedByFlame){//overlaps with a player
+        minePtr->setIsAlive(false);
+        playSound(SOUND_LANDMINE_EXPLODE);
+        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY(), playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), playerPtr->getDirection()));
+    }
+}
+
+void StudentWorld::plantLandmine(){
+    actorList.push_back(new Landmine(this, playerPtr->getX()- SPRITE_WIDTH / 2, playerPtr->getY() - SPRITE_HEIGHT / 2));
+}
+
 bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
     if(doesOverlap(goodie, playerPtr->getX(), playerPtr->getY())){
         return true;
     }
     return false;
+}
+
+void StudentWorld::damageObjects(Actor* flamePtr){
+    if(doesOverlapWithPlayer(flamePtr)){
+        playerPtr->setIsAlive(false);
+    }
+    vector<Actor*>::iterator actIt = actorList.begin();
+    while(actIt != actorList.end()){
+        if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, flamePtr->getX(), flamePtr->getY())){
+            if((*actIt)->getExplosive() == true){
+                explodeMine(*actIt, true);
+            }else{
+                (*actIt)->setIsAlive(false);
+            }
+        }
+        actIt++;
+    }
+
 }
 
 void StudentWorld::blastFlame(){
@@ -242,7 +275,11 @@ void StudentWorld::blastFlame(){
                     isBlocked = true;
                     break;
                 }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
-                    (*actIt)->setIsAlive(false);
+                    if((*actIt)->getExplosive() == true){
+                        explodeMine(*actIt, true);
+                    }else{
+                        (*actIt)->setIsAlive(false);
+                    }
                 }
                 actIt++;
             }
@@ -261,7 +298,11 @@ void StudentWorld::blastFlame(){
                     isBlocked = true;
                     break;
                 }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
-                    (*actIt)->setIsAlive(false);
+                    if((*actIt)->getExplosive() == true){
+                        explodeMine(*actIt, true);
+                    }else{
+                        (*actIt)->setIsAlive(false);
+                    }
                 }
                 actIt++;
             }
@@ -280,7 +321,11 @@ void StudentWorld::blastFlame(){
                     isBlocked = true;
                     break;
                 }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
-                    (*actIt)->setIsAlive(false);
+                    if((*actIt)->getExplosive() == true){
+                        explodeMine(*actIt, true);
+                    }else{
+                        (*actIt)->setIsAlive(false);
+                    }
                 }
                 actIt++;
             }
@@ -299,7 +344,11 @@ void StudentWorld::blastFlame(){
                     isBlocked = true;
                     break;
                 }else if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
-                    (*actIt)->setIsAlive(false);
+                    if((*actIt)->getExplosive() == true){
+                        explodeMine(*actIt, true);
+                    }else{
+                        (*actIt)->setIsAlive(false);
+                    }
                 }
                 actIt++;
             }

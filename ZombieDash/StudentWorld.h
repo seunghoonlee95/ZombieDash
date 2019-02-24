@@ -28,7 +28,7 @@ public:
     void escapeHumans(double exitX, double exitY);
     bool doesOverlapWithPlayer(Actor* goodie);
     void blastFlame();
-    void explodeMine(Actor* landMinePtr, double mineX, double mineY);
+    void explodeMine(Actor* minePtr, bool damagedByFlame);
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}
 //    bool getGotVaccine(){return m_gotVaccine;}
@@ -39,6 +39,8 @@ public:
     void incrementVaccine();
     void incrementFlameCount();
     void incrementLandmineCount();
+    void plantLandmine();
+    void damageObjects(Actor* flamePtr);
 
     
     

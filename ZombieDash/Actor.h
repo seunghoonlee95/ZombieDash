@@ -16,7 +16,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false)
     {
     }
     virtual ~Actor(){}
@@ -34,6 +34,10 @@ public:
     void setCanUseExit(bool exitUsable){m_canUseExit = exitUsable;}
     bool getCanBeInfected(){return m_canBeInfected;}
     void setCanBeInfected(bool infectable){m_canBeInfected = infectable;}
+    bool getCanStepOnLandmine(){return m_canStepOnLandmine;}
+    void setCanStepOnLandmine(bool stepStatus){m_canStepOnLandmine = stepStatus;}
+    bool getExplosive(){return m_explosive;}
+    void setExplosive(int explosive){m_explosive = explosive;}
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
@@ -43,7 +47,9 @@ private:
     bool m_canBeBurned;
     bool m_canBeInfected;
     bool m_canUseExit;
-    
+    bool m_canStepOnLandmine;
+    bool m_explosive;
+
 };
 
 class Wall : public Actor{
@@ -96,6 +102,31 @@ public:
 private:
     int m_ticksPassed;
 };
+
+class Landmine : public ActivatingObject{
+public:
+    Landmine(StudentWorld* stdWorld, double startX, double startY)
+    :ActivatingObject(stdWorld, IID_LANDMINE, startX, startY, right, 1, 1.0), m_isActive(false), m_safetyTicks(30)
+    {
+        setPassable(true);
+        setCanBeInfected(false);
+        setCanBeBurned(true);
+        setExplosive(true);
+    }
+    virtual ~Landmine(){}
+    void doSomething();
+    bool getIsActive(){return m_isActive;}
+    void setIsActive(bool status){m_isActive = status;}
+    int getSafetyTicks(){return m_safetyTicks;}
+    void decrementSafetyTicks(){m_safetyTicks--;}
+//    bool getDamagedByFire(){return m_damagedByFire;}
+//    void setDamagedByFire(bool fireAttacked){m_damagedByFire = fireAttacked;}
+private:
+    bool m_isActive;
+    int m_safetyTicks;
+//    bool m_damagedByFire;
+};
+
 
 class Goodie : public ActivatingObject{
 public:
@@ -150,9 +181,13 @@ public:
 class Agent : public Actor{
 public:
     Agent(StudentWorld* stdWorld,int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :Actor(stdWorld, imageID, startX, startY, dir, depth, size){
+    :Actor(stdWorld, imageID, startX, startY, dir, depth, size)
+    {
+        setCanStepOnLandmine(true);
     }
     virtual ~Agent(){}
+private:
+    
 };
 
 class Human : public Agent{

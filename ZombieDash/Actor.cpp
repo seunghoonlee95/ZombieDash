@@ -65,7 +65,13 @@ void Penelope::doSomething(){
                     getWorld()->blastFlame();
                 }
                 break;
-        }
+            case KEY_PRESS_TAB:
+                if(getNumLandmines() > 0){
+                    getWorld()->plantLandmine();
+                    changeNumLandmines(-1);
+                }
+                break;
+        }//end of switch statement
     }
 }
 
@@ -123,13 +129,28 @@ void Flame::doSomething(){
     if(getIsAlive() == false){
         return;
     }
-//    cout << "tick : " << getTicksPassed() << endl;
     if(getTicksPassed() == 2){
         setIsAlive(false);
         return;
     }
-    
-    
     setTicksPassed(getTicksPassed() + 1);
+    getWorld()->damageObjects(this);
+}
+
+void Landmine::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    if(getIsActive() == false){
+        decrementSafetyTicks();
+        if(getSafetyTicks() == 0){
+            setIsActive(true);
+            return;
+        }
+    }else{//when Landmine is active
+        getWorld()->explodeMine(this, false);
+    }
+
+    
 }
 
