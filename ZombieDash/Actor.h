@@ -210,7 +210,7 @@ private:
 class Penelope : public Human{
 public:
     Penelope(StudentWorld* stdWorld, double startX, double startY)
-    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(0), m_numFlames(100), m_numVaccines(0){
+    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(110), m_numFlames(100), m_numVaccines(0){
         setIsAlive(true);
     }
     virtual ~Penelope(){}

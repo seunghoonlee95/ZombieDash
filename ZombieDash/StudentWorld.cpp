@@ -119,29 +119,16 @@ int StudentWorld::move(){
         return GWSTATUS_PLAYER_DIED;
     }
     
-//    if(getGotVaccine()){
-//        setGotVaccine(false);
-//        playerPtr->changeNumVaccines(1);
-//    }
-//    if(getGotFlames()){
-//        setGotFlames(false);
-//        playerPtr->changeNumFlames(5);
-//    }
-    
-    
     vector<Actor*>::iterator actIt = actorList.begin();
-    while(actIt != actorList.end()){
+    while(actIt != actorList.end() && *actIt != nullptr){
         if((*actIt)->getIsAlive() == false){
-//            if(*actIt != nullptr){
-                delete *actIt;
-                actorList.erase(actIt);
-              //  actIt++;      //this was causing the error!!
-//            }
-        }else{
-            if(*actIt != nullptr){
+            delete *actIt;
+            actorList.erase(actIt);
+            //  actIt++;      //this was causing the error!!
+        }
+        else{
                 (*actIt)->doSomething();
                 actIt++;
-            }
         }
     }
 
@@ -188,12 +175,12 @@ bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
 
 //The distance between the center points should be less than or equal to 10 pixels..
 bool StudentWorld::doesOverlap(Actor *actorPtr, double otherX, double otherY){
-        double distance;
-        distance = sqrt(pow(actorPtr->getX() - otherX, 2) + pow(actorPtr->getY() - otherY, 2));
-        if(distance <= 10.0){
-//            cout << "distance : " << distance << endl;
-            return true;
-        }
+    double distance;
+    distance = sqrt(pow(actorPtr->getX() - otherX, 2) + pow(actorPtr->getY() - otherY, 2));
+    if(distance <= 10.0){
+        //            cout << "distance : " << distance << endl;
+        return true;
+    }
     return false;
 }
 
@@ -221,8 +208,8 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
 
 void StudentWorld::explodeMine(Actor* minePtr, bool damagedByFlame){
     if(doesOverlap(playerPtr, minePtr->getX(), minePtr->getY()) || damagedByFlame){//overlaps with a player
-        minePtr->setIsAlive(false);
-        playSound(SOUND_LANDMINE_EXPLODE);
+//        cout<<"player overlaps with the mine!! "<< endl;
+//        exit(1);
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
@@ -232,6 +219,8 @@ void StudentWorld::explodeMine(Actor* minePtr, bool damagedByFlame){
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), playerPtr->getDirection()));
+        minePtr->setIsAlive(false);
+        playSound(SOUND_LANDMINE_EXPLODE);
     }
 }
 
@@ -247,21 +236,26 @@ bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
 }
 
 void StudentWorld::damageObjects(Actor* flamePtr){
+    vector<Actor*>::iterator actIt = actorList.begin();
     if(doesOverlapWithPlayer(flamePtr)){
         playerPtr->setIsAlive(false);
-    }
-    vector<Actor*>::iterator actIt = actorList.begin();
-    while(actIt != actorList.end()){
-        if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, flamePtr->getX(), flamePtr->getY())){
-            if((*actIt)->getExplosive() == true){
-                explodeMine(*actIt, true);
-            }else{
-                (*actIt)->setIsAlive(false);
+//        cout << "flame overlaps with the player!! player dies.." << endl;
+    }else{
+        while(actIt != actorList.end() && *actIt != nullptr){
+//                    if(*actIt == nullptr){
+//                        cout << "nullptr!!! exiting!!!" << endl;
+//                        exit(1);
+//                    }
+            if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, flamePtr->getX(), flamePtr->getY())){
+                if((*actIt)->getExplosive() == true){
+                    explodeMine(*actIt, true);
+                }else{
+                    (*actIt)->setIsAlive(false);
+                }
             }
+            actIt++;
         }
-        actIt++;
     }
-
 }
 
 void StudentWorld::blastFlame(){
@@ -371,4 +365,3 @@ void StudentWorld::incrementFlameCount(){
 void StudentWorld::incrementLandmineCount(){
     playerPtr->changeNumLandmines(2);
 }
-
