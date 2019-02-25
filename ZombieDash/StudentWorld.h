@@ -30,6 +30,9 @@ public:
     void blastFlame();
     void explodeMine(Actor* minePtr, bool damagedByFlame);
     void fallIntoPit(Actor* pitPtr);
+    double determineDistToPenelope(Actor* citizenPtr);
+    void determineDistToZombie();
+    void followPenelope(Actor* actorPtr);
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}
 //    bool getGotVaccine(){return m_gotVaccine;}

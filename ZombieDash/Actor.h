@@ -247,36 +247,33 @@ public:
     void changeNumVaccines(int num){m_numVaccines += num;}
     void changeNumLandmines(int num){m_numLandmines += num;}
     void changeNumFlames(int num){m_numFlames += num;}
-    
 private:
     int m_numLandmines;
     int m_numFlames;
     int m_numVaccines;
-    
 };
 
+class Citizen : public Human{
+public:
+    Citizen(StudentWorld* stdWorld, double startX, double startY)
+    :Human(stdWorld, IID_CITIZEN, startX, startY), m_ticksPassed(0), dist_p(1000), dist_z(1000)
+    {
+        
+    }
+    virtual ~Citizen(){}
+    void doSomething();
+    void setTicksPassed(int tick){m_ticksPassed = tick;}
+    int getTicksPassed(){return m_ticksPassed;}
+    int getDistP(){return dist_p;}
+    void setDistP(double distanceP){dist_p = distanceP;}
+    int getDistZ(){return dist_z;}
+    void setDistZ(double distanceZ){dist_z = distanceZ;}
+private:
+    int m_ticksPassed;
+    double dist_p;
+    double dist_z;
+};
 
-
-
-
-//class Citizen : public Human{
-//public:
-//    Citizen(StudentWorld* stdWorld, double startX, double startY)
-//    :Human(stdWorld, IID_CITIZEN, startX, startY){}
-//    virtual ~Citizen(){}
-//    void doSomething(){}
-//private:
-//
-//};
-
-//
-//class Pit : public Actor{
-//public:
-//    Pit();
-//    void doSomething(){}
-//
-//};
-//
 
 //
 //class Vomit : public Actor{
@@ -288,26 +285,6 @@ private:
 //
 
 
-
-//
-//class LandmineGoodie : public Actor{
-//public:
-//    LandmineGoodie();
-//    void doSomething(){}
-//
-//};
-//
-//class Landmine : public Actor{
-//public:
-//    Landmine();
-//    void doSomething(){}
-//
-//};
-//
-//
-//
-//
-//
 
 #endif // ACTOR_H_
 

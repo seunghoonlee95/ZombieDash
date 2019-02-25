@@ -154,7 +154,35 @@ void Landmine::doSomething(){
     }else{//when Landmine is active
         getWorld()->explodeMine(this, false);
     }
+}
 
+void Citizen::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    setTicksPassed(getTicksPassed() + 1);
+    if(getIsInfected() == true){
+        setInfectionCount(getInfectionCount() + 1);
+        if(getInfectionCount() == 500){
+            setIsAlive(false);
+            getWorld()->playSound(SOUND_ZOMBIE_BORN);
+            getWorld()->increaseScore(-1000);
+            //Introduce a zombie based on the probability shown in spec..
+            return;
+        }
+    }
+    if(getTicksPassed() % 2 == 0){
+        cout << "freeze in this tick : " << getTicksPassed() << endl;
+        return;
+    }
+    setDistP(getWorld()->determineDistToPenelope(this));
+    //setDistZ too here!
+    
+    if(getDistP() < getDistZ() && getDistP() <= 80.0){
+//        cout << "distance is below 80 follow Penelope!" << endl;
+        getWorld()->followPenelope(this);
+        return;
+    }
     
 }
 

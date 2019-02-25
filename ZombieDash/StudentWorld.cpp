@@ -77,6 +77,9 @@ int StudentWorld::init(){
                         break;
                     case Level::dumb_zombie:
                         break;
+                    case Level::citizen:
+                        actorList.push_back(new Citizen(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        break;
                     case Level::player:
                         playerPtr = new Penelope(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y);
                         break;
@@ -87,6 +90,7 @@ int StudentWorld::init(){
                         actorList.push_back(new Wall(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                         break;
                     case Level::pit:
+                        actorList.push_back(new Pit(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                         break;
                     case Level::vaccine_goodie:
                         actorList.push_back(new VaccineGoodie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
@@ -162,15 +166,19 @@ void StudentWorld::cleanUp()
 }
 
 //Cannot intersect others' bounding boxes!!
-bool StudentWorld::doesIntersect(Actor* sameActor, double x, double y){
+bool StudentWorld::doesIntersect(Actor* actorPtr, double destX, double destY){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
-        if(sameActor != (*actIt) && abs((*actIt)->getX() - x) < 16 && abs((*actIt)->getY() - y) < 16){
-            if((*actIt)->getPassable() == false){//if the destination object is not passable(wall or citizen only among actorList) return true
+        if(actorPtr != (*actIt) && abs((*actIt)->getX() - destX) < 16 && abs((*actIt)->getY() - destY) < 16){
+            if((*actIt)->getPassable() == false){//if the destination object is not passable(wall, citizen, zombie only among actorList) return true
                 return true;
             }
         }
         actIt++;
+    }
+
+    if(actorPtr != playerPtr && abs((playerPtr)->getX() - destX) < 16 && abs((playerPtr)->getY() - destY) < 16){//check if it intersects with Penelope
+        return true;
     }
     return false;
 }
@@ -391,4 +399,25 @@ void StudentWorld::incrementFlameCount(){
 }
 void StudentWorld::incrementLandmineCount(){
     playerPtr->changeNumLandmines(2);
+}
+
+double StudentWorld::determineDistToPenelope(Actor* citizenPtr){
+    double distance;
+    distance = sqrt(pow(citizenPtr->getX() - playerPtr->getX(), 2) + pow(citizenPtr->getY() - playerPtr->getY(), 2));
+    return distance;
+}
+
+void StudentWorld::followPenelope(Actor *actorPtr){
+    //if the citizen is on the same row or column as Penelope
+    if(actorPtr->getX() == playerPtr->getX() || actorPtr->getY() == playerPtr->getY()){
+        if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() < playerPtr->getY()){  //are in the same column and Penelope is above citizen
+            cout << "Penelope is above citizen! "<<endl;
+            if(doesIntersect(actorPtr, actorPtr->getX(), actorPtr->getY() + 2) == false){
+
+                actorPtr->setDirection(GraphObject::up);
+                actorPtr->moveTo(actorPtr->getX(), actorPtr->getY() + 2);
+                return;
+            }
+        }
+    }
 }
