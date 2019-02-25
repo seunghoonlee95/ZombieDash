@@ -172,7 +172,7 @@ void Citizen::doSomething(){
         }
     }
     if(getTicksPassed() % 2 == 0){
-        cout << "freeze in this tick : " << getTicksPassed() << endl;
+//        cout << "freeze in this tick : " << getTicksPassed() << endl;
         return;
     }
     setDistP(getWorld()->determineDistToPenelope(this));
@@ -184,5 +184,28 @@ void Citizen::doSomething(){
         return;
     }
 
+}
+
+void Vomit::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    if(getTicksPassed() == 2){
+        setIsAlive(false);
+        return;
+    }
+    setTicksPassed(getTicksPassed() + 1);
+    getWorld()->infectObjects(this);
+}
+
+void DumbZombie::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    setTicksPassed(getTicksPassed() + 1);
+    if(getTicksPassed() % 2 == 0){
+        return;
+    }
+    //Continue here@@@@@@@@@@@@@@@@@@@@@@@@@@
 }
 

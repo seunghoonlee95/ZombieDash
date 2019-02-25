@@ -48,6 +48,7 @@ public:
     void incrementLandmineCount();
     void plantLandmine();
     void damageObjects(Actor* flamePtr);
+    void infectObjects(Actor* vomitPtr);
     bool moveCitizen(Actor* actorPtr, Direction dir);
 
     

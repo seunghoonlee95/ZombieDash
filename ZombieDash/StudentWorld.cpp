@@ -76,6 +76,7 @@ int StudentWorld::init(){
                     case Level::smart_zombie:
                         break;
                     case Level::dumb_zombie:
+                        actorList.push_back(new DumbZombie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                         break;
                     case Level::citizen:
                         actorList.push_back(new Citizen(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
@@ -277,16 +278,26 @@ void StudentWorld::damageObjects(Actor* flamePtr){
         playerPtr->setIsAlive(false);
     }else{
         while(actIt != actorList.end() && *actIt != nullptr){
-//                    if(*actIt == nullptr){
-//                        cout << "nullptr!!! exiting!!!" << endl;
-//                        exit(1);
-//                    }
             if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, flamePtr->getX(), flamePtr->getY())){
                 if((*actIt)->getExplosive() == true){
                     explodeMine(*actIt, true); 
                 }else{
                     (*actIt)->setIsAlive(false);
                 }
+            }
+            actIt++;
+        }
+    }
+}
+
+void StudentWorld::infectObjects(Actor* vomitPtr){
+    vector<Actor*>::iterator actIt = actorList.begin();
+    if(doesOverlapWithPlayer(vomitPtr)){
+        playerPtr->setIsAlive(false);
+    }else{
+        while(actIt != actorList.end() && *actIt != nullptr){
+            if((*actIt)->getCanBeInfected() == true && doesOverlap(*actIt, vomitPtr->getX(), vomitPtr->getY())){
+                    (*actIt)->setIsAlive(false);
             }
             actIt++;
         }

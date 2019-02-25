@@ -79,6 +79,22 @@ public:
     virtual ~ActivatingObject(){}
 };
 
+class Vomit : public ActivatingObject{
+public:
+    Vomit(StudentWorld* stdWorld, double startX, double startY, Direction dir)
+    :ActivatingObject(stdWorld, IID_VOMIT, startX, startY, dir, 0, 1.0), m_ticksPassed(0)
+    {
+        
+    }
+    virtual ~Vomit(){}
+    void doSomething();
+    void setTicksPassed(int tick){m_ticksPassed = tick;}
+    int getTicksPassed(){return m_ticksPassed;}
+private:
+    int m_ticksPassed;
+
+};
+
 class Exit : public ActivatingObject{
 public:
     Exit(StudentWorld* stdWorld, double startX, double startY)
@@ -230,6 +246,31 @@ public:
 private:
     int m_infectionCount;
     bool m_isInfected;
+};
+
+class Zombie : public Agent{
+public:
+    Zombie(StudentWorld* stdWorld, int imageID, double startX, double startY)
+    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_ticksPassed(0)
+    {
+        
+    }
+    void setTicksPassed(int tick){m_ticksPassed = tick;}
+    int getTicksPassed(){return m_ticksPassed;}
+    virtual ~Zombie(){}
+private:
+    int m_ticksPassed;
+
+};
+
+class DumbZombie : public Zombie{
+public:
+    DumbZombie(StudentWorld* stdWorld, double startX, double startY)
+    :Zombie(stdWorld, IID_ZOMBIE, startX, startY)
+    {
+        
+    }
+    void doSomething();
 };
 
 class Penelope : public Human{
