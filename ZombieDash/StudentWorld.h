@@ -15,6 +15,8 @@ using namespace std;
 
 class Actor;
 class Penelope;
+class Zombie;
+//class Human;
 
 class StudentWorld : public GameWorld
 {
@@ -27,15 +29,16 @@ public:
     virtual int move();
     virtual void cleanUp();
     bool doesIntersect(Actor* sameActor, double x, double y);
-    bool doesOverlap(Actor* sameActor, double x, double y);
+    bool doesOverlap(double actorX, double actorY, double x, double y);
     void escapeHumans(double exitX, double exitY);
-    bool doesOverlapWithPlayer(Actor* goodie);
+    bool doesOverlapWithPlayer(double actorX, double actorY);
     void blastFlame();
     void explodeMine(Actor* minePtr, bool damagedByFlame);
     void fallIntoPit(Actor* pitPtr);
     double determineDistToPenelope(Actor* citizenPtr);
     void determineDistToZombie();
     void followPenelope(Actor* actorPtr);
+    bool throwVomit(Zombie* zombiePtr);
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}
 //    bool getGotVaccine(){return m_gotVaccine;}

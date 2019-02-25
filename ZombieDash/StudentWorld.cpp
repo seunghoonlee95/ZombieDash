@@ -185,11 +185,10 @@ bool StudentWorld::doesIntersect(Actor* actorPtr, double destX, double destY){
 }
 
 //The distance between the center points should be less than or equal to 10 pixels..
-bool StudentWorld::doesOverlap(Actor *actorPtr, double otherX, double otherY){
+bool StudentWorld::doesOverlap(double actorX, double actorY, double otherX, double otherY){
     double distance;
-    distance = sqrt(pow(actorPtr->getX() - otherX, 2) + pow(actorPtr->getY() - otherY, 2));
+    distance = sqrt(pow(actorX - otherX, 2) + pow(actorY - otherY, 2));
     if(distance <= 10.0){
-        //            cout << "distance : " << distance << endl;
         return true;
     }
     return false;
@@ -200,7 +199,7 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         if((*actIt)->getCanUseExit()){//only citizen can use exit among ActorList.
-            if(doesOverlap(*actIt, exitX, exitY)){//when exit overlaps with citizen, free the citizen
+            if(doesOverlap((*actIt)->getX(), (*actIt)->getY(),exitX, exitY)){//when exit overlaps with citizen, free the citizen
                 increaseScore(500);
                 (*actIt)->setIsAlive(false);
                 playSound(SOUND_CITIZEN_SAVED);
@@ -210,7 +209,7 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
         actIt++;
     }
     //Now check if exit overlaps with Penelope
-    if(doesOverlap(playerPtr, exitX, exitY)){
+    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), exitX, exitY)){
         if(freedAllCitizens){
             setFinishedLevel(true);
         }
@@ -218,13 +217,13 @@ void StudentWorld::escapeHumans(double exitX, double exitY){
 }
 
 void StudentWorld::fallIntoPit(Actor *pitPtr){
-    if(doesOverlapWithPlayer(pitPtr)){
+    if(doesOverlapWithPlayer(pitPtr->getX(), pitPtr->getY())){
         playerPtr->setIsAlive(false);
     }
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end()){
         if((*actIt)->getCanFallIntoPit() == true){
-            if(doesOverlap(pitPtr, (*actIt)->getX(), (*actIt)->getY())){
+            if(doesOverlap(pitPtr->getX(), pitPtr->getY(),(*actIt)->getX(), (*actIt)->getY())){
                 //check if the actor is citizen or a zombie...
                 if((*actIt)->getCanBeInfected()){//when citizen falls into a pit
                     (*actIt)->setIsAlive(false);
@@ -243,7 +242,7 @@ void StudentWorld::fallIntoPit(Actor *pitPtr){
 }
 
 void StudentWorld::explodeMine(Actor* minePtr, bool damagedByFlame){
-    if(doesOverlap(playerPtr, minePtr->getX(), minePtr->getY()) || damagedByFlame){//overlaps with a player
+    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY()) || damagedByFlame){//overlaps with a player
 //        cout<<"player overlaps with the mine!! "<< endl;
 //        exit(1);
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
@@ -265,39 +264,46 @@ void StudentWorld::plantLandmine(){
     actorList.push_back(new Landmine(this, playerPtr->getX(), playerPtr->getY()));
 }
 
-bool StudentWorld::doesOverlapWithPlayer(Actor* goodie){
-    if(doesOverlap(goodie, playerPtr->getX(), playerPtr->getY())){
+bool StudentWorld::doesOverlapWithPlayer(double actorX, double actorY){
+    if(doesOverlap(actorX, actorY, playerPtr->getX(), playerPtr->getY())){
         return true;
     }
     return false;
 }
 
-void StudentWorld::damageObjects(Actor* flamePtr){
+
+
+void StudentWorld::infectObjects(Actor* vomitPtr){
     vector<Actor*>::iterator actIt = actorList.begin();
-    if(doesOverlapWithPlayer(flamePtr)){
-        playerPtr->setIsAlive(false);
+    if(doesOverlapWithPlayer(vomitPtr->getX(), vomitPtr->getY())){
+        playerPtr->setIsInfected(true);
     }else{
         while(actIt != actorList.end() && *actIt != nullptr){
-            if((*actIt)->getCanBeBurned() == true && doesOverlap(*actIt, flamePtr->getX(), flamePtr->getY())){
-                if((*actIt)->getExplosive() == true){
-                    explodeMine(*actIt, true); 
-                }else{
-                    (*actIt)->setIsAlive(false);
-                }
+            if((*actIt)->getCanBeInfected() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), vomitPtr->getX(), vomitPtr->getY())){
+                    (*actIt)->setIsInfected(true);
             }
             actIt++;
         }
     }
 }
 
-void StudentWorld::infectObjects(Actor* vomitPtr){
+void StudentWorld::damageObjects(Actor* flamePtr){
     vector<Actor*>::iterator actIt = actorList.begin();
-    if(doesOverlapWithPlayer(vomitPtr)){
+    if(doesOverlapWithPlayer(flamePtr->getX(), flamePtr->getY())){    //check if Penelope dies due to flame
         playerPtr->setIsAlive(false);
     }else{
         while(actIt != actorList.end() && *actIt != nullptr){
-            if((*actIt)->getCanBeInfected() == true && doesOverlap(*actIt, vomitPtr->getX(), vomitPtr->getY())){
+            if((*actIt)->getCanBeBurned() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), flamePtr->getX(), flamePtr->getY())){
+                if((*actIt)->getExplosive() == true){
+                    explodeMine(*actIt, true);
+                }else if((*actIt)->getCanBeInfected()){//when citizen dies due to flame
                     (*actIt)->setIsAlive(false);
+                    playSound(SOUND_CITIZEN_DIE);
+                    increaseScore(-1000);
+                }else{                      //need to add case do differentiate the case when zombie dies. 
+                    (*actIt)->setIsAlive(false);
+
+                }
             }
             actIt++;
         }
@@ -310,17 +316,19 @@ void StudentWorld::blastFlame(){
         for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
             vector<Actor*>::iterator actIt = actorList.begin();
             while(actIt != actorList.end()){
-                if((*actIt)->getBlockFireVomit() == true && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
+                if((*actIt)->getBlockFireVomit() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
                     //when flame overlaps with an exit or wall
                     isBlocked = true;
                     break;
-                }else if((*actIt)->getBlockFireVomit() == false && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
-                    if((*actIt)->getExplosive() == true){//when it overlaps with a mine.
-                        explodeMine(*actIt, true);
-                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
-                        (*actIt)->setIsAlive(false);
-                    }
                 }
+//                //from HERE!
+//                else if((*actIt)->getBlockFireVomit() == false && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX(), playerPtr->getY() + i * SPRITE_HEIGHT)){
+//                    if((*actIt)->getExplosive() == true){//when it overlaps with a mine.
+//                        explodeMine(*actIt, true);
+//                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
+//                        (*actIt)->setIsAlive(false);
+//                    }
+//                }//to HERE!
                 actIt++;
             }
             if(isBlocked == true){
@@ -333,17 +341,18 @@ void StudentWorld::blastFlame(){
         for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
             vector<Actor*>::iterator actIt = actorList.begin();
             while(actIt != actorList.end()){
-                if((*actIt)->getBlockFireVomit() == true && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
+                if((*actIt)->getBlockFireVomit() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
                     //when flame overlaps with an exit or wall
                     isBlocked = true;
                     break;
-                }else if((*actIt)->getBlockFireVomit() == false && doesOverlap(*actIt, playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
-                    if((*actIt)->getExplosive() == true){
-                        explodeMine(*actIt, true);
-                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
-                        (*actIt)->setIsAlive(false);
-                    }
                 }
+//                else if((*actIt)->getBlockFireVomit() == false && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX(), playerPtr->getY() - i * SPRITE_HEIGHT)){
+//                    if((*actIt)->getExplosive() == true){
+//                        explodeMine(*actIt, true);
+//                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
+//                        (*actIt)->setIsAlive(false);
+//                    }
+//                }
                 actIt++;
             }
             if(isBlocked == true){
@@ -356,17 +365,18 @@ void StudentWorld::blastFlame(){
         for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
             vector<Actor*>::iterator actIt = actorList.begin();
             while(actIt != actorList.end()){
-                if((*actIt)->getBlockFireVomit() == true && doesOverlap(*actIt, playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
+                if((*actIt)->getBlockFireVomit() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
                     //when flame overlaps with an exit or wall
                     isBlocked = true;
                     break;
-                }else if((*actIt)->getBlockFireVomit() == false && doesOverlap(*actIt, playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
-                    if((*actIt)->getExplosive() == true){
-                        explodeMine(*actIt, true);
-                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
-                        (*actIt)->setIsAlive(false);
-                    }
                 }
+//                else if((*actIt)->getBlockFireVomit() == false && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX() - i * SPRITE_WIDTH, playerPtr->getY())){
+//                    if((*actIt)->getExplosive() == true){
+//                        explodeMine(*actIt, true);
+//                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
+//                        (*actIt)->setIsAlive(false);
+//                    }
+//                }
                 actIt++;
             }
             if(isBlocked == true){
@@ -379,17 +389,18 @@ void StudentWorld::blastFlame(){
         for(int i = 1; i < 4; i++){                 //I think it should be from 1 to 4 not 0 to 3 as in sepc....!!
             vector<Actor*>::iterator actIt = actorList.begin();
             while(actIt != actorList.end()){
-                if((*actIt)->getBlockFireVomit() == true && doesOverlap(*actIt, playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
+                if((*actIt)->getBlockFireVomit() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
                     //when flame overlaps with an exit or wall
                     isBlocked = true;
                     break;
-                }else if((*actIt)->getBlockFireVomit() == false && doesOverlap(*actIt, playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
-                    if((*actIt)->getExplosive() == true){
-                        explodeMine(*actIt, true);
-                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
-                        (*actIt)->setIsAlive(false);
-                    }
                 }
+//                else if((*actIt)->getBlockFireVomit() == false && doesOverlap((*actIt)->getX(), (*actIt)->getY(), playerPtr->getX() + i * SPRITE_WIDTH, playerPtr->getY())){
+//                    if((*actIt)->getExplosive() == true){
+//                        explodeMine(*actIt, true);
+//                    }else if((*actIt)->getCanBeBurned()){//does not blcok fire & not explosive & cannot be burned
+//                        (*actIt)->setIsAlive(false);
+//                    }
+//                }
                 actIt++;
             }
             if(isBlocked == true){
@@ -514,4 +525,31 @@ bool StudentWorld::moveCitizen(Actor* actorPtr, Direction dir){
             break;
     }
     return movedSuccessfully;
+}
+
+//Returns true if successfully threw the vomit to Human
+bool StudentWorld::throwVomit(Zombie *zombiePtr){
+    int chooseToVomit = 1;
+    if(doesOverlapWithPlayer(zombiePtr->getVomitX(), zombiePtr->getVomitY())){
+        int vomitDecision = randInt(1, 3);
+        if(vomitDecision == chooseToVomit){
+            actorList.push_back(new Vomit(this, zombiePtr->getVomitX(), zombiePtr->getVomitY(), zombiePtr->getDirection()));
+            playSound(SOUND_ZOMBIE_VOMIT);
+            return true;
+        }
+    }else{
+        vector<Actor*>::iterator actIt = actorList.begin();
+        while(actIt != actorList.end() && *actIt != nullptr){
+            if((*actIt)->getCanBeInfected() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), zombiePtr->getVomitX(), zombiePtr->getVomitY())){
+                int vomitDecision = randInt(1, 3);
+                if(vomitDecision == chooseToVomit){
+                    actorList.push_back(new Vomit(this, zombiePtr->getVomitX(), zombiePtr->getVomitY(), zombiePtr->getDirection()));
+                    playSound(SOUND_ZOMBIE_VOMIT);
+                    return true;
+                }
+            }
+            actIt++;
+        }
+    }
+    return false;
 }

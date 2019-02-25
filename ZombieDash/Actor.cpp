@@ -76,7 +76,7 @@ void Penelope::doSomething(){
 }
 
 void Goodie::pickUp(){
-    if(getWorld()->doesOverlapWithPlayer(this)){
+    if(getWorld()->doesOverlapWithPlayer(this->getX(), this->getY())){
         getWorld()->increaseScore(50);
         setIsAlive(false);
         getWorld()->playSound(SOUND_GOT_GOODIE);
@@ -198,6 +198,27 @@ void Vomit::doSomething(){
     getWorld()->infectObjects(this);
 }
 
+void Zombie::computeVomitCoor(Zombie* zombiePtr, Direction dir){
+    switch (dir) {
+        case right:
+            setVomitX(zombiePtr->getX() + SPRITE_WIDTH);
+            setVomitY(zombiePtr->getY());
+            break;
+        case left:
+            setVomitX(zombiePtr->getX() - SPRITE_WIDTH);
+            setVomitY(zombiePtr->getY());
+            break;
+        case up:
+            setVomitX(zombiePtr->getX());
+            setVomitY(zombiePtr->getY() + SPRITE_HEIGHT);
+            break;
+        case down:
+            setVomitX(zombiePtr->getX());
+            setVomitY(zombiePtr->getY() - SPRITE_HEIGHT);
+            break;
+    }
+}
+
 void DumbZombie::doSomething(){
     if(getIsAlive() == false){
         return;
@@ -206,6 +227,60 @@ void DumbZombie::doSomething(){
     if(getTicksPassed() % 2 == 0){
         return;
     }
-    //Continue here@@@@@@@@@@@@@@@@@@@@@@@@@@
+    computeVomitCoor(this, getDirection());
+    if(getWorld()->throwVomit(this)){
+        return;
+    }
+    if(getMovementPlan() == 0){
+        setMovementPlan(randInt(3, 10));
+        cout << "new movement plan : " << getMovementPlan() << endl;
+    }
+    
+        const int rightZ = 1;
+        const int leftZ = 2;
+        const int downZ = 3;
+        const int upZ = 4;
+        int newDirection = randInt(1, 4);
+        switch (newDirection) {
+            case rightZ:
+                setDirection(right);
+                if(!(getWorld()->doesIntersect(this, getX() + 1, getY()))){
+                    moveTo(getX() + 1, getY());
+                    setMovementPlan(getMovementPlan() - 1);
+                }else{//when the zombie is blocked by wall, Human, Zombie
+                    setMovementPlan(0);
+                }
+                break;
+            case leftZ:
+                setDirection(left);
+                if(!(getWorld()->doesIntersect(this, getX() - 1, getY()))){
+                    moveTo(getX() - 1, getY());
+                    setMovementPlan(getMovementPlan() - 1);
+                }else{//when the zombie is blocked by wall, Human, Zombie
+                    setMovementPlan(0);
+                }
+                break;
+            case downZ:
+                setDirection(down);
+                if(!(getWorld()->doesIntersect(this, getX(), getY() - 1))){
+                    moveTo(getX(), getY() - 1);
+                    setMovementPlan(getMovementPlan() - 1);
+                }else{//when the zombie is blocked by wall, Human, Zombie
+                    setMovementPlan(0);
+                }
+                break;
+            case upZ:
+                setDirection(up);
+                if(!(getWorld()->doesIntersect(this, getX(), getY() + 1))){
+                    moveTo(getX(), getY() + 1);
+                    setMovementPlan(getMovementPlan() - 1);
+                }else{//when the zombie is blocked by wall, Human, Zombie
+                    setMovementPlan(0);
+                }
+                break;
+        }
+    
+
+    
 }
 

@@ -16,7 +16,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false), m_isInfected(false)
     {
     }
     virtual ~Actor(){}
@@ -42,6 +42,9 @@ public:
     void setBlockFireVomit(bool canBlock){m_blockFireVomit = canBlock;}
     bool getCanFallIntoPit(){return m_canFallIntoPit;}
     void setCanFallIntoPit(bool isPossible){m_canFallIntoPit = isPossible;}
+    bool getIsInfected(){return m_isInfected;}
+    void setIsInfected(bool infectionStatus){m_isInfected = infectionStatus;}
+
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
@@ -50,6 +53,7 @@ private:
     bool m_isAlive;
     bool m_canBeBurned;
     bool m_canBeInfected;
+    bool m_isInfected;
     bool m_canUseExit;
     bool m_canStepOnLandmine;
     bool m_explosive;
@@ -234,32 +238,48 @@ private:
 class Human : public Agent{
 public:
     Human(StudentWorld* stdWorld, int imageID, double startX, double startY)
-    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0), m_isInfected(false){
+    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0)
+    {
         setCanUseExit(true);
     }
     virtual ~Human(){}
     int getInfectionCount(){return m_infectionCount;}
     void setInfectionCount(int infCount){m_infectionCount = infCount;}
-    bool getIsInfected(){return m_isInfected;}
-    void setIsInfected(bool infectionStatus){m_isInfected = infectionStatus;}
     
 private:
     int m_infectionCount;
-    bool m_isInfected;
 };
 
 class Zombie : public Agent{
 public:
     Zombie(StudentWorld* stdWorld, int imageID, double startX, double startY)
-    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_ticksPassed(0)
+    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_ticksPassed(0), m_vomitX(-1), m_vomitY(-1), m_movementPlan(0) /*, m_destX(-1), m_destY(-1)*/
     {
-        
+        setCanBeInfected(false);
     }
+    virtual ~Zombie(){}
     void setTicksPassed(int tick){m_ticksPassed = tick;}
     int getTicksPassed(){return m_ticksPassed;}
-    virtual ~Zombie(){}
+    double getVomitX(){return m_vomitX;}
+    void setVomitX(double x){m_vomitX = x;}
+    double getVomitY(){return m_vomitY;}
+    void setVomitY(double y){m_vomitY = y;}
+    void computeVomitCoor(Zombie* zombiePtr, Direction dir);
+    int getMovementPlan(){return m_movementPlan;}
+    void setMovementPlan(int plan){m_movementPlan = plan;}
+    
+//    double getDestX(){return m_destX;}
+//    void setDestX(double x){m_destX = x;}
+//    double getDestY(){return m_destY;}
+//    void setDestY(double y){m_destX = y;}
+    
 private:
     int m_ticksPassed;
+    double m_vomitX;
+    double m_vomitY;
+    int m_movementPlan;
+//    double m_destX;
+//    double m_destY;
 
 };
 
@@ -314,18 +334,6 @@ private:
     double dist_p;
     double dist_z;
 };
-
-
-//
-//class Vomit : public Actor{
-//public:
-//    Vomit();
-//    void doSomething(){} 
-//
-//};
-//
-
-
 
 #endif // ACTOR_H_
 
