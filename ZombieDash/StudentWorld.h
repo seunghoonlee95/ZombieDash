@@ -29,6 +29,7 @@ public:
     bool doesOverlapWithPlayer(Actor* goodie);
     void blastFlame();
     void explodeMine(Actor* minePtr, bool damagedByFlame);
+    void fallIntoPit(Actor* pitPtr);
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}
 //    bool getGotVaccine(){return m_gotVaccine;}

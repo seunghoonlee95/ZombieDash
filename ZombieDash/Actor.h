@@ -16,7 +16,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false)
     {
     }
     virtual ~Actor(){}
@@ -27,7 +27,7 @@ public:
     bool getIsAlive(){return m_isAlive;}
     //Maybe not needed if kill() is used instead...
     void setIsAlive(bool status){m_isAlive = status;}
-    void kill(){m_isAlive = false;}
+//    void kill(){m_isAlive = false;}
     bool getCanBeBurned(){return m_canBeBurned;}
     void setCanBeBurned(bool burnable){m_canBeBurned = burnable;}
     bool getCanUseExit(){return m_canUseExit;}
@@ -38,6 +38,10 @@ public:
     void setCanStepOnLandmine(bool stepStatus){m_canStepOnLandmine = stepStatus;}
     bool getExplosive(){return m_explosive;}
     void setExplosive(int explosive){m_explosive = explosive;}
+    bool getBlockFireVomit(){return m_blockFireVomit;}
+    void setBlockFireVomit(bool canBlock){m_blockFireVomit = canBlock;}
+    bool getCanFallIntoPit(){return m_canFallIntoPit;}
+    void setCanFallIntoPit(bool isPossible){m_canFallIntoPit = isPossible;}
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
@@ -49,6 +53,8 @@ private:
     bool m_canUseExit;
     bool m_canStepOnLandmine;
     bool m_explosive;
+    bool m_blockFireVomit;
+    bool m_canFallIntoPit;
 
 };
 
@@ -58,6 +64,7 @@ public:
     :Actor(stdWorld, IID_WALL, startX, startY, right, 0, 1.0){
         setCanBeBurned(false);
         setCanBeInfected(false);
+        setBlockFireVomit(true);
     }
     virtual ~Wall(){}
     void doSomething(){}
@@ -79,11 +86,28 @@ public:
         setPassable(true);
         setCanBeBurned(false);
         setCanBeInfected(false);
+        setBlockFireVomit(true);
+
     }
     virtual ~Exit(){}
     void doSomething();
 private:
     
+};
+
+class Pit : public ActivatingObject{
+public:
+    Pit(StudentWorld* stdWorld, double startX, double startY)
+    :ActivatingObject(stdWorld, IID_PIT, startX, startY, right, 0, 1.0)
+    {
+        setCanBeBurned(false);
+        setCanBeInfected(false);
+        setPassable(true);
+
+    }
+    virtual ~Pit(){}
+    void doSomething();
+
 };
 
 class Flame : public ActivatingObject{
@@ -184,6 +208,7 @@ public:
     :Actor(stdWorld, imageID, startX, startY, dir, depth, size)
     {
         setCanStepOnLandmine(true);
+        setCanFallIntoPit(true);
     }
     virtual ~Agent(){}
 private:

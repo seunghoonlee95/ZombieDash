@@ -104,6 +104,10 @@ void Exit::doSomething(){
     getWorld()->escapeHumans(getX(), getY());
 }
 
+void Pit::doSomething(){
+    getWorld()->fallIntoPit(this);
+}
+
 void VaccineGoodie::doSomething(){
     if(getIsAlive() == false){
         return;
