@@ -183,6 +183,6 @@ void Citizen::doSomething(){
         getWorld()->followPenelope(this);
         return;
     }
-    
+
 }
 

@@ -409,15 +409,98 @@ double StudentWorld::determineDistToPenelope(Actor* citizenPtr){
 
 void StudentWorld::followPenelope(Actor *actorPtr){
     //if the citizen is on the same row or column as Penelope
-    if(actorPtr->getX() == playerPtr->getX() || actorPtr->getY() == playerPtr->getY()){
-        if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() < playerPtr->getY()){  //are in the same column and Penelope is above citizen
-            cout << "Penelope is above citizen! "<<endl;
-            if(doesIntersect(actorPtr, actorPtr->getX(), actorPtr->getY() + 2) == false){
+    if(actorPtr->getX() == playerPtr->getX() || actorPtr->getY() == playerPtr->getY()){ //Citizen and Penelope are in the same column
+        if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() < playerPtr->getY()){  // Penelope is above citizen
+            moveCitizen(actorPtr, GraphObject::up);
 
-                actorPtr->setDirection(GraphObject::up);
-                actorPtr->moveTo(actorPtr->getX(), actorPtr->getY() + 2);
-                return;
+        }else if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() > playerPtr->getY()){    // citizen is above Penelope
+            moveCitizen(actorPtr, GraphObject::down);
+
+        }else if(actorPtr->getX() < playerPtr->getX() && actorPtr->getY() == playerPtr->getY()){    // Penelope is standing right to citizen
+            moveCitizen(actorPtr, GraphObject::right);
+
+        }else if(actorPtr->getX() > playerPtr->getX() && actorPtr->getY() == playerPtr->getY()){    //Citizen is standing right to Penelope.
+            moveCitizen(actorPtr, GraphObject::left);
+
+        }
+    }else{//citizen is not in the same row or column as Penelope.
+        int horizontal = 0;
+        int vertical = 1;
+        int direction;
+        direction = randInt(0, 1);
+        if(direction == horizontal){
+            if(actorPtr->getX() < playerPtr->getX()){//when Penelope is standing right to citizen
+                if(!moveCitizen(actorPtr, GraphObject::right)){//if moving right is blocked, go vertically instead.
+                    if(actorPtr->getY() < playerPtr->getY()){//when citizen is below Penelope.
+                        moveCitizen(actorPtr, GraphObject::up);
+                    }else if(actorPtr->getY() > playerPtr->getY()){//when citizen is above Penelope.
+                        moveCitizen(actorPtr, GraphObject::down);
+                    }
+                }
+            }else if(actorPtr->getX() > playerPtr->getX()){//when citizen is standing right to Penelope
+                if(!moveCitizen(actorPtr, GraphObject::left)){//if moving left is blocked, go vertically instead
+                    if(actorPtr->getY() < playerPtr->getY()){//when citizen is below Penelope.
+                        moveCitizen(actorPtr, GraphObject::up);
+                    }else if(actorPtr->getY() > playerPtr->getY()){//when citizen is above Penelope.
+                        moveCitizen(actorPtr, GraphObject::down);
+                    }
+                }
+            }
+        }else if(direction == vertical){
+            if(actorPtr->getY() < playerPtr->getY()){//when Penelope is standing above to citizen
+                if(!moveCitizen(actorPtr, GraphObject::up)){//if moving up is blocked, go horizontally instead.
+                    if(actorPtr->getX() < playerPtr->getX()){//when citizen is left to Penelope.
+                        moveCitizen(actorPtr, GraphObject::right);
+                    }else if(actorPtr->getX() > playerPtr->getX()){//when citizen is right Penelope.
+                        moveCitizen(actorPtr, GraphObject::left);
+                    }
+                }
+            }else if(actorPtr->getY() > playerPtr->getY()){//when Penelope is standing above to citizen
+                if(!moveCitizen(actorPtr, GraphObject::down)){//if moving down is blocked, go horizontally instead.
+                    if(actorPtr->getX() < playerPtr->getX()){//when citizen is left to Penelope.
+                        moveCitizen(actorPtr, GraphObject::right);
+                    }else if(actorPtr->getX() > playerPtr->getX()){//when citizen is right Penelope.
+                        moveCitizen(actorPtr, GraphObject::left);
+                    }
+                }
             }
         }
     }
+}
+
+
+//returns false when it failed to move.
+bool StudentWorld::moveCitizen(Actor* actorPtr, Direction dir){
+    bool movedSuccessfully = false;
+    switch (dir) {
+        case GraphObject::right:
+            if(doesIntersect(actorPtr, actorPtr->getX() + 2, actorPtr->getY()) == false){
+                actorPtr->setDirection(GraphObject::right);
+                actorPtr->moveTo(actorPtr->getX() + 2, actorPtr->getY());
+                movedSuccessfully = true;
+            }
+            break;
+        case GraphObject::left:
+            if(doesIntersect(actorPtr, actorPtr->getX() - 2, actorPtr->getY()) == false){
+                actorPtr->setDirection(GraphObject::left);
+                actorPtr->moveTo(actorPtr->getX() - 2, actorPtr->getY());
+                movedSuccessfully = true;
+            }
+            break;
+        case GraphObject::up:
+            if(doesIntersect(actorPtr, actorPtr->getX(), actorPtr->getY() + 2) == false){
+                actorPtr->setDirection(GraphObject::up);
+                actorPtr->moveTo(actorPtr->getX(), actorPtr->getY() + 2);
+                movedSuccessfully = true;
+            }
+            break;
+        case GraphObject::down:
+            if(doesIntersect(actorPtr, actorPtr->getX(), actorPtr->getY() - 2) == false){
+                actorPtr->setDirection(GraphObject::down);
+                actorPtr->moveTo(actorPtr->getX(), actorPtr->getY() - 2);
+                movedSuccessfully = true;
+            }
+            break;
+    }
+    return movedSuccessfully;
 }

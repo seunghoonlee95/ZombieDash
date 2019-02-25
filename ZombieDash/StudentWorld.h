@@ -5,6 +5,9 @@
 #include <string>
 #include <vector>
 #include <iostream>
+
+#include "GraphObject.h"    //I added this
+
 using namespace std;
 
 
@@ -45,8 +48,8 @@ public:
     void incrementLandmineCount();
     void plantLandmine();
     void damageObjects(Actor* flamePtr);
+    bool moveCitizen(Actor* actorPtr, Direction dir);
 
-    
     
 private:
     vector<Actor*> actorList;
