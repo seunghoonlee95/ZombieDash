@@ -33,7 +33,7 @@ public:
     void escapeHumans(double exitX, double exitY);
     bool doesOverlapWithPlayer(double actorX, double actorY);
     void blastFlame();
-    void explodeMine(Actor* minePtr, bool damagedByFlame);
+    void explodeMine(Actor* minePtr);
     void fallIntoPit(Actor* pitPtr);
     double determineDistToPenelope(Actor* citizenPtr);
     void determineDistToZombie();

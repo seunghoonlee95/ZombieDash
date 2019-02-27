@@ -73,7 +73,9 @@ int StudentWorld::init(){
                 Level::MazeEntry ge = lev.getContentsOf(x,y); // level_x=5, level_y=10 switch (ge) // so x=80 and y=160
                 switch (ge){
                     case Level::empty:
+                        break;
                     case Level::smart_zombie:
+                        actorList.push_back(new SmartZombie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
                         break;
                     case Level::dumb_zombie:
                         actorList.push_back(new DumbZombie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
@@ -241,10 +243,8 @@ void StudentWorld::fallIntoPit(Actor *pitPtr){
     
 }
 
-void StudentWorld::explodeMine(Actor* minePtr, bool damagedByFlame){
-    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY()) || damagedByFlame){//overlaps with a player
-//        cout<<"player overlaps with the mine!! "<< endl;
-//        exit(1);
+void StudentWorld::explodeMine(Actor* minePtr){
+    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY())){//overlaps with a player or flame
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
@@ -257,7 +257,36 @@ void StudentWorld::explodeMine(Actor* minePtr, bool damagedByFlame){
         minePtr->setIsAlive(false);
         playSound(SOUND_LANDMINE_EXPLODE);
         actorList.push_back(new Pit(this, minePtr->getX(), minePtr->getY()));
+        
     }
+    
+        vector<Actor*>::iterator actIt = actorList.begin();
+        while(actIt != actorList.end() && (*actIt) != nullptr){
+            if((*actIt)->getCanStepOnLandmine() == true){
+                if(doesOverlap((*actIt)->getX(), (*actIt)->getY(), minePtr->getX(), minePtr->getY())){
+                    //overlaps with a citizen/zombie or a flame.
+                    cout << "citizen(for now) stepped on landmine!!" << endl;
+                    actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY(), playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+                    actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), playerPtr->getDirection()));
+                    minePtr->setIsAlive(false);
+                    playSound(SOUND_LANDMINE_EXPLODE);
+                    actorList.push_back(new Pit(this, minePtr->getX(), minePtr->getY()));
+                    break;
+                    //                actIt = actorList.begin();
+                    //                continue;
+                }
+            }
+            actIt++;
+        }
+    
+    
 }
 
 void StudentWorld::plantLandmine(){
@@ -294,15 +323,37 @@ void StudentWorld::damageObjects(Actor* flamePtr){
     }else{
         while(actIt != actorList.end() && *actIt != nullptr){
             if((*actIt)->getCanBeBurned() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), flamePtr->getX(), flamePtr->getY())){
-                if((*actIt)->getExplosive() == true){
-                    explodeMine(*actIt, true);
-                }else if((*actIt)->getCanBeInfected()){//when citizen dies due to flame
-                    (*actIt)->setIsAlive(false);
-                    playSound(SOUND_CITIZEN_DIE);
-                    increaseScore(-1000);
-                }else{                      //need to add case do differentiate the case when zombie dies. 
-                    (*actIt)->setIsAlive(false);
-
+                if((*actIt)->getPassable() == true){//it's either landmine or goodie.
+                    if((*actIt)->getExplosive() == true){
+                        explodeMine(*actIt);
+                    }else{//it's a goodie
+                        
+                        (*actIt)->setIsAlive(false);
+                    }
+                }else{//if the actor is not passable.
+                    if((*actIt)->getExplosive() == true){
+                        explodeMine(*actIt);
+                    }else if((*actIt)->getCanBeInfected()){//when citizen dies due to flame
+                        (*actIt)->setIsAlive(false);
+                        playSound(SOUND_CITIZEN_DIE);
+                        cout << "citizen died " << endl;
+                        increaseScore(-1000);
+                    }else if((*actIt)->getCanHoldVaccine()){ //need to add case do differentiate the case when zombie dies. or it can be a goodie.
+                        //it's a dumb zombie
+                        (*actIt)->setIsAlive(false);
+                        playSound(SOUND_ZOMBIE_DIE);
+                        increaseScore(1000);
+                        if((*actIt)->getNumVaccines() == 1){
+                            VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY());
+                            vaccineDropped->setIsFromZombie(true);
+                            vaccineDropped->setCanBeBurned(false);
+                            actorList.push_back(vaccineDropped);
+                        }
+                    }else if(!(*actIt)->getCanHoldVaccine()){ //it's a smart zombie
+                        (*actIt)->setIsAlive(false);
+                        playSound(SOUND_ZOMBIE_DIE);
+                        increaseScore(2000);
+                    }
                 }
             }
             actIt++;

@@ -16,12 +16,12 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false), m_isInfected(false)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false), m_isInfected(false),m_canHoldVaccine(false), m_numVaccines(0)
     {
     }
     virtual ~Actor(){}
     virtual void doSomething()=0;
-    
+
     bool getPassable(){return m_passable;}
     void setPassable(bool passVal){m_passable = passVal;}
     bool getIsAlive(){return m_isAlive;}
@@ -44,11 +44,16 @@ public:
     void setCanFallIntoPit(bool isPossible){m_canFallIntoPit = isPossible;}
     bool getIsInfected(){return m_isInfected;}
     void setIsInfected(bool infectionStatus){m_isInfected = infectionStatus;}
+    bool getCanHoldVaccine(){return m_canHoldVaccine;}
+    void setCanHoldVaccine(bool canHold){m_canHoldVaccine = canHold;}
+
+    int getNumVaccines(){return m_numVaccines;}
+    void changeNumVaccines(int num){m_numVaccines += num;}
 
     StudentWorld* getWorld() const{return m_stdPtr;}
 private:
     StudentWorld* m_stdPtr;
-    
+
     bool m_passable;
     bool m_isAlive;
     bool m_canBeBurned;
@@ -59,6 +64,9 @@ private:
     bool m_explosive;
     bool m_blockFireVomit;
     bool m_canFallIntoPit;
+    bool m_canHoldVaccine;
+    int m_numVaccines;
+
 
 };
 
@@ -88,7 +96,7 @@ public:
     Vomit(StudentWorld* stdWorld, double startX, double startY, Direction dir)
     :ActivatingObject(stdWorld, IID_VOMIT, startX, startY, dir, 0, 1.0), m_ticksPassed(0)
     {
-        
+
     }
     virtual ~Vomit(){}
     void doSomething();
@@ -112,7 +120,7 @@ public:
     virtual ~Exit(){}
     void doSomething();
 private:
-    
+
 };
 
 class Pit : public ActivatingObject{
@@ -138,6 +146,7 @@ public:
         setCanBeInfected(false);
         setCanBeBurned(false);
         setPassable(true);
+        setCanStepOnLandmine(true);
     }
     virtual ~Flame(){}
     void doSomething();
@@ -188,13 +197,22 @@ public:
 class VaccineGoodie : public Goodie{
 public:
     VaccineGoodie(StudentWorld* stdWorld, double startX, double startY)
-    :Goodie(stdWorld, IID_VACCINE_GOODIE, startX, startY, right, 1, 1.0)
+    :Goodie(stdWorld, IID_VACCINE_GOODIE, startX, startY, right, 1, 1.0), m_ticksPassed(0), m_isFromZombie(false)
     {
-
+        
     }
+    
     virtual ~VaccineGoodie(){}
     void doSomething();
     virtual void grantSpecificGoodieReward();
+    void setTicksPassed(int tick){m_ticksPassed = tick;}
+    int getTicksPassed(){return m_ticksPassed;}
+    void setIsFromZombie(bool isIt){m_isFromZombie = isIt;}
+    bool getIsFromZombie(){return m_isFromZombie;}
+private:
+    int m_ticksPassed;
+    bool m_isFromZombie;
+
 };
 
 class GasCanGoodie : public Goodie{
@@ -229,10 +247,12 @@ public:
     {
         setCanStepOnLandmine(true);
         setCanFallIntoPit(true);
+
     }
+
     virtual ~Agent(){}
 private:
-    
+
 };
 
 class Human : public Agent{
@@ -241,11 +261,12 @@ public:
     :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0)
     {
         setCanUseExit(true);
+        setCanHoldVaccine(true);
     }
     virtual ~Human(){}
     int getInfectionCount(){return m_infectionCount;}
     void setInfectionCount(int infCount){m_infectionCount = infCount;}
-    
+
 private:
     int m_infectionCount;
 };
@@ -267,17 +288,19 @@ public:
     void computeVomitCoor(Zombie* zombiePtr, Direction dir);
     int getMovementPlan(){return m_movementPlan;}
     void setMovementPlan(int plan){m_movementPlan = plan;}
-    
+
+
 //    double getDestX(){return m_destX;}
 //    void setDestX(double x){m_destX = x;}
 //    double getDestY(){return m_destY;}
 //    void setDestY(double y){m_destX = y;}
-    
+
 private:
     int m_ticksPassed;
     double m_vomitX;
     double m_vomitY;
     int m_movementPlan;
+
 //    double m_destX;
 //    double m_destY;
 
@@ -288,7 +311,22 @@ public:
     DumbZombie(StudentWorld* stdWorld, double startX, double startY)
     :Zombie(stdWorld, IID_ZOMBIE, startX, startY)
     {
-        
+        setCanHoldVaccine(true);
+        int holdsVaccine = 1;
+        int holdOrNot = randInt(1, 10);
+       // if(holdOrNot == holdsVaccine){
+            changeNumVaccines(1);
+       // }
+    }
+    void doSomething();
+};
+
+class SmartZombie : public Zombie{
+public:
+    SmartZombie(StudentWorld* stdWorld, double startX, double startY)
+    :Zombie(stdWorld, IID_ZOMBIE, startX, startY)
+    {
+
     }
     void doSomething();
 };
@@ -296,22 +334,21 @@ public:
 class Penelope : public Human{
 public:
     Penelope(StudentWorld* stdWorld, double startX, double startY)
-    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(110), m_numFlames(100), m_numVaccines(0){
+    :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(110), m_numFlames(100)
+    {
         setIsAlive(true);
     }
     virtual ~Penelope(){}
     void doSomething();
-    
+
     int getNumLandmines(){return m_numLandmines;}
     int getNumFlames(){return m_numFlames;}
-    int getNumVaccines(){return m_numVaccines;}
-    void changeNumVaccines(int num){m_numVaccines += num;}
+
     void changeNumLandmines(int num){m_numLandmines += num;}
     void changeNumFlames(int num){m_numFlames += num;}
 private:
     int m_numLandmines;
     int m_numFlames;
-    int m_numVaccines;
 };
 
 class Citizen : public Human{
@@ -319,7 +356,7 @@ public:
     Citizen(StudentWorld* stdWorld, double startX, double startY)
     :Human(stdWorld, IID_CITIZEN, startX, startY), m_ticksPassed(0), dist_p(1000), dist_z(1000)
     {
-        
+
     }
     virtual ~Citizen(){}
     void doSomething();

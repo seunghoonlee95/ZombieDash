@@ -13,7 +13,7 @@ void Penelope::doSomething(){
     if(getIsAlive() == false){//check to see if she is still alive
         return;
     }
-    
+
     if(getIsInfected()){
         setInfectionCount(getInfectionCount() + 1);
         if(getInfectionCount() == 500){
@@ -82,7 +82,7 @@ void Goodie::pickUp(){
         getWorld()->playSound(SOUND_GOT_GOODIE);
         grantSpecificGoodieReward();
     }
-    
+
 }
 
 void VaccineGoodie::grantSpecificGoodieReward(){
@@ -111,6 +111,12 @@ void Pit::doSomething(){
 void VaccineGoodie::doSomething(){
     if(getIsAlive() == false){
         return;
+    }
+    if(getIsFromZombie()){
+        setTicksPassed(getTicksPassed() + 1);
+        if(getTicksPassed() == 2){
+            setCanBeBurned(true);
+        }
     }
     pickUp();
 }
@@ -152,7 +158,7 @@ void Landmine::doSomething(){
             return;
         }
     }else{//when Landmine is active
-        getWorld()->explodeMine(this, false);
+        getWorld()->explodeMine(this);
     }
 }
 
@@ -177,7 +183,7 @@ void Citizen::doSomething(){
     }
     setDistP(getWorld()->determineDistToPenelope(this));
     //setDistZ too here!
-    
+
     if(getDistP() < getDistZ() && getDistP() <= 80.0){
 //        cout << "distance is below 80 follow Penelope!" << endl;
         getWorld()->followPenelope(this);
@@ -233,9 +239,9 @@ void DumbZombie::doSomething(){
     }
     if(getMovementPlan() == 0){
         setMovementPlan(randInt(3, 10));
-        cout << "new movement plan : " << getMovementPlan() << endl;
+//        cout << "new movement plan : " << getMovementPlan() << endl;
     }
-    
+
         const int rightZ = 1;
         const int leftZ = 2;
         const int downZ = 3;
@@ -279,8 +285,11 @@ void DumbZombie::doSomething(){
                 }
                 break;
         }
-    
-
-    
 }
+
+void SmartZombie::doSomething(){
+
+
+}
+
 
