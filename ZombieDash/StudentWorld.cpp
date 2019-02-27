@@ -130,12 +130,11 @@ int StudentWorld::move(){
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end() && *actIt != nullptr){
         if((*actIt)->getIsAlive() == false){
-            delete *actIt;
+            delete (*actIt);
             actorList.erase(actIt);
 //            actIt = actorList.erase(actIt);
             //  actIt++;      //this was causing the error!!
-        }
-        else{
+        }else if((*actIt)->getIsAlive() == true){
                 (*actIt)->doSomething();
                 actIt++;
         }
@@ -246,8 +245,8 @@ void StudentWorld::fallIntoPit(Actor *pitPtr){
 }
 
 void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
-    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY()) || triggeredByFlame){//overlaps with a player or flame
-//        cout << "Penelope stepped on landmine!!" << endl;
+    if(triggeredByFlame || doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY())){//overlaps with a player or flame
+        cout << "Explode mine either by flame or Penelope!" << endl;
 
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
@@ -268,7 +267,7 @@ void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
             if((*actIt)->getCanStepOnLandmine() == true){
                 if(doesOverlap((*actIt)->getX(), (*actIt)->getY(), minePtr->getX(), minePtr->getY())){
                     //overlaps with a citizen/zombie or a flame.
-                    cout << "citizen/zombie/flame stepped on landmine!!" << endl;
+                    cout << "citizen/zombie/flame overlapped with landmine!!" << endl;
                     actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
                     actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
                     actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
@@ -281,9 +280,9 @@ void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
                     minePtr->setIsAlive(false);
                     playSound(SOUND_LANDMINE_EXPLODE);
                     actorList.push_back(new Pit(this, minePtr->getX(), minePtr->getY()));
+                    cout<<"executed until here~(end of explodeMine method)" << endl;
                     return;
-                    //                actIt = actorList.begin();
-                    //                continue;
+
                 }
             }
             actIt++;
@@ -321,11 +320,12 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
     vector<Actor*>::iterator actIt = actorList.begin();
     if(doesOverlapWithPlayer(flamePtr->getX(), flamePtr->getY())){    //check if Penelope dies due to flame
         playerPtr->setIsAlive(false);
+        return;
     }else{
         while(actIt != actorList.end() && *actIt != nullptr){
             if((*actIt)->getCanBeBurned() == true && doesOverlap((*actIt)->getX(), (*actIt)->getY(), flamePtr->getX(), flamePtr->getY())){
                 if((*actIt)->getPassable() == true){//it's either landmine or goodie.
-                    if((*actIt)->getExplosive() == true){//it's a landmine
+                    if((*actIt)->getExplosive() == true && (*actIt)->getIsAlive() == true){//it's a landmine
                         explodeMine(*actIt, true);
                         return;
                     }else{//it's a goodie
