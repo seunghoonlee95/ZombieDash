@@ -186,7 +186,7 @@ void Citizen::doSomething(){
 
     if(getDistP() < getDistZ() && getDistP() <= 80.0){
 //        cout << "distance is below 80 follow Penelope!" << endl;
-        getWorld()->followPenelope(this);
+        getWorld()->followPenelope(this, 2);
         return;
     }
 

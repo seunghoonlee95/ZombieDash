@@ -37,9 +37,12 @@ public:
     void fallIntoPit(Actor* pitPtr);
     double determineDistToPenelope(Actor* actorPtr);
     void determineDistToZombie();
-    void followPenelope(Actor* actorPtr);
     bool throwVomit(Zombie* zombiePtr);
     bool findClosestPerson(Zombie* zombiePtr);
+    
+//    void followActor(Actor* followerPtr, Actor* destPtr, int moveDistance);
+    void followPenelope(Actor* actorPtr, int moveDistance);
+
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}
 //    bool getGotVaccine(){return m_gotVaccine;}
@@ -53,7 +56,7 @@ public:
     void plantLandmine();
     void damageObjects(Actor* flamePtr);
     void infectObjects(Actor* vomitPtr);
-    bool moveCitizen(Actor* actorPtr, Direction dir);
+    bool moveActor(Actor* actorPtr, Direction dir, int moveDistance);
 
     
 private:
