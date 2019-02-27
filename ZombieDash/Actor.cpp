@@ -158,7 +158,7 @@ void Landmine::doSomething(){
             return;
         }
     }else{//when Landmine is active
-        getWorld()->explodeMine(this);
+        getWorld()->explodeMine(this, false);
     }
 }
 
