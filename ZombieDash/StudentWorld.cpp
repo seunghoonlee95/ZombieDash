@@ -328,7 +328,6 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                     if((*actIt)->getExplosive() == true){//it's a landmine
                         explodeMine(*actIt, true);
                         return;
-//                        cout <<"back here!" << endl;
                     }else{//it's a goodie
                         (*actIt)->setIsAlive(false);
                         return;
