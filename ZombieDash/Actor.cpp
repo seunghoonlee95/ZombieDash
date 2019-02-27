@@ -288,6 +288,45 @@ void DumbZombie::doSomething(){
 }
 
 void SmartZombie::doSomething(){
+    if(getIsAlive() == false){
+        return;
+    }
+    setTicksPassed(getTicksPassed() + 1);
+    if(getTicksPassed() % 2 == 0){
+        return;
+    }
+    computeVomitCoor(this, getDirection());
+    if(getWorld()->throwVomit(this)){
+        return;
+    }
+    if(getMovementPlan() == 0){
+        setMovementPlan(randInt(3, 10));
+//        cout << "movementPlan : " << getMovementPlan()<< endl;
+    }
+
+    bool foundClosestPerson;
+    foundClosestPerson = getWorld()->findClosestPerson(this);
+    if(!foundClosestPerson){
+        const int rightZ = 1;
+        const int leftZ = 2;
+        const int downZ = 3;
+        const int upZ = 4;
+        int newDirection = randInt(1, 4);
+        switch (newDirection) {
+            case rightZ:
+                setDirection(right);
+                break;
+            case leftZ:
+                setDirection(left);
+                break;
+            case downZ:
+                setDirection(down);
+                break;
+            case upZ:
+                setDirection(up);
+                break;
+        }
+    }
 
 
 }

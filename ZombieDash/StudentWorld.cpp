@@ -339,19 +339,19 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                         cout << "citizen died " << endl;
                         increaseScore(-1000);
                         return;
-                    }else if((*actIt)->getCanHoldVaccine()){ //need to add case do differentiate the case when zombie dies. or it can be a goodie.
+                    }else if((*actIt)->getCanHoldVaccine() && (*actIt)->getIsAlive()){ //need to add case do differentiate the case when zombie dies. or it can be a goodie.
                         //it's a dumb zombie
                         (*actIt)->setIsAlive(false);
                         playSound(SOUND_ZOMBIE_DIE);
                         increaseScore(1000);
-                        if((*actIt)->getNumVaccines() == 1){
+                        if((*actIt)->getNumVaccines() == 1 && (*actIt)->getIsAlive()){
                             VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY());
                             vaccineDropped->setIsFromZombie(true);
                             vaccineDropped->setCanBeBurned(false);
                             actorList.push_back(vaccineDropped);
                         }
                         return;
-                    }else if(!(*actIt)->getCanHoldVaccine()){ //it's a smart zombie
+                    }else if(!(*actIt)->getCanHoldVaccine() && (*actIt)->getIsAlive()){ //it's a smart zombie
                         (*actIt)->setIsAlive(false);
                         playSound(SOUND_ZOMBIE_DIE);
                         increaseScore(2000);
@@ -477,9 +477,9 @@ void StudentWorld::incrementLandmineCount(){
     playerPtr->changeNumLandmines(2);
 }
 
-double StudentWorld::determineDistToPenelope(Actor* citizenPtr){
+double StudentWorld::determineDistToPenelope(Actor* actorPtr){
     double distance;
-    distance = sqrt(pow(citizenPtr->getX() - playerPtr->getX(), 2) + pow(citizenPtr->getY() - playerPtr->getY(), 2));
+    distance = sqrt(pow(actorPtr->getX() - playerPtr->getX(), 2) + pow(actorPtr->getY() - playerPtr->getY(), 2));
     return distance;
 }
 
@@ -606,4 +606,34 @@ bool StudentWorld::throwVomit(Zombie *zombiePtr){
         }
     }
     return false;
+}
+
+bool StudentWorld::findClosestPerson(Zombie *zombiePtr){
+    double distanceToPenelope = determineDistToPenelope(zombiePtr);
+    double distanceToCitizen = 10000;
+    double minDistance;
+    vector<Actor*>::iterator actIt = actorList.begin();
+    while(actIt != actorList.end() && *actIt != nullptr){
+
+        double temp = sqrt(pow(zombiePtr->getX() - (*actIt)->getX(), 2) + pow(zombiePtr->getY() - (*actIt)->getY(), 2));
+        if(temp <= distanceToCitizen){
+            distanceToCitizen = temp;
+        }
+        actIt++;
+    }
+    if(distanceToPenelope > distanceToCitizen){
+        minDistance = distanceToCitizen;
+    }else{
+        minDistance = distanceToPenelope;
+    }
+    
+    if(minDistance > 80){
+        return false;
+    }else{
+        if(distanceToPenelope <= distanceToCitizen){    //follow Penelope.
+            
+        }
+        return true;
+    }
+    
 }
