@@ -15,6 +15,10 @@ void Penelope::doSomething(){
     }
 
     if(getIsInfected()){
+        if(getPlayedSoundInfected() == false){
+            getWorld()->playSound(SOUND_CITIZEN_INFECTED);
+            setPlayedSoundInfected(true);
+        }
         setInfectionCount(getInfectionCount() + 1);
         if(getInfectionCount() == 500){
             setIsAlive(false);
@@ -168,11 +172,13 @@ void Citizen::doSomething(){
     }
     setTicksPassed(getTicksPassed() + 1);
     if(getIsInfected() == true){
+        if(getPlayedSoundInfected() == false){
+            getWorld()->playSound(SOUND_CITIZEN_INFECTED);
+            setPlayedSoundInfected(true);
+        }
         setInfectionCount(getInfectionCount() + 1);
         if(getInfectionCount() == 500){
-            setIsAlive(false);
-            getWorld()->playSound(SOUND_ZOMBIE_BORN);
-            getWorld()->increaseScore(-1000);
+            getWorld()->citizenBecomeZombie(this);
             //Introduce a zombie based on the probability shown in spec..
             return;
         }
@@ -186,7 +192,7 @@ void Citizen::doSomething(){
 
     if(getDistP() < getDistZ() && getDistP() <= 80.0){
 //        cout << "distance is below 80 follow Penelope!" << endl;
-        getWorld()->followPenelope(this, 2);
+        getWorld()->followPenelope(this,2);
         return;
     }
 
@@ -239,7 +245,7 @@ void DumbZombie::doSomething(){
     }
     if(getMovementPlan() == 0){
         setMovementPlan(randInt(3, 10));
-//        cout << "new movement plan : " << getMovementPlan() << endl;
+//        cout << "dumb zombie's new movement plan : " << getMovementPlan() << endl;
     }
 
         const int rightZ = 1;
@@ -301,59 +307,58 @@ void SmartZombie::doSomething(){
     }
     if(getMovementPlan() == 0){
         setMovementPlan(randInt(3, 10));
-        cout << "movementPlan : " << getMovementPlan()<< endl;
+//        cout << "smart zombie's new movement plan : " << getMovementPlan()<< endl;
     }
 
     bool foundClosestPerson;
-    foundClosestPerson = getWorld()->findClosestPerson(this);
+    foundClosestPerson = getWorld()->findClosestPersonAndFollow(this);
     if(!foundClosestPerson){//if there is no Person within 80 pixels, then set its direction randomly.
+        //cout << "In here!!" <<endl;
         const int rightZ = 1;
         const int leftZ = 2;
         const int downZ = 3;
         const int upZ = 4;
         int newDirection = randInt(1, 4);
-        switch (newDirection) {
-                switch (newDirection) {
-                    case rightZ:
-                        setDirection(right);
-                        if(!(getWorld()->doesIntersect(this, getX() + 1, getY()))){
-                            moveTo(getX() + 1, getY());
-                            setMovementPlan(getMovementPlan() - 1);
-                        }else{//when the zombie is blocked by wall, Human, Zombie
-                            setMovementPlan(0);
-                        }
-                        break;
-                    case leftZ:
-                        setDirection(left);
-                        if(!(getWorld()->doesIntersect(this, getX() - 1, getY()))){
-                            moveTo(getX() - 1, getY());
-                            setMovementPlan(getMovementPlan() - 1);
-                        }else{//when the zombie is blocked by wall, Human, Zombie
-                            setMovementPlan(0);
-                        }
-                        break;
-                    case downZ:
-                        setDirection(down);
-                        if(!(getWorld()->doesIntersect(this, getX(), getY() - 1))){
-                            moveTo(getX(), getY() - 1);
-                            setMovementPlan(getMovementPlan() - 1);
-                        }else{//when the zombie is blocked by wall, Human, Zombie
-                            setMovementPlan(0);
-                        }
-                        break;
-                    case upZ:
-                        setDirection(up);
-                        if(!(getWorld()->doesIntersect(this, getX(), getY() + 1))){
-                            moveTo(getX(), getY() + 1);
-                            setMovementPlan(getMovementPlan() - 1);
-                        }else{//when the zombie is blocked by wall, Human, Zombie
-                            setMovementPlan(0);
-                        }
-                        break;
-                }
-        }//end of switch
-
-
+//        cout << "newDirection : " << newDirection << endl;
+            switch (newDirection){
+                case rightZ:
+                    setDirection(right);
+                    if(!(getWorld()->doesIntersect(this, getX() + 1, getY()))){
+                        moveTo(getX() + 1, getY());
+                        setMovementPlan(getMovementPlan() - 1);
+                    }else{//when the zombie is blocked by wall, Human, Zombie
+                        setMovementPlan(0);
+                    }
+                    break;
+                case leftZ:
+                    setDirection(left);
+                    if(!(getWorld()->doesIntersect(this, getX() - 1, getY()))){
+                        moveTo(getX() - 1, getY());
+                        setMovementPlan(getMovementPlan() - 1);
+                    }else{//when the zombie is blocked by wall, Human, Zombie
+                        setMovementPlan(0);
+                    }
+                    break;
+                case downZ:
+                    setDirection(down);
+                    if(!(getWorld()->doesIntersect(this, getX(), getY() - 1))){
+                        moveTo(getX(), getY() - 1);
+                        setMovementPlan(getMovementPlan() - 1);
+                    }else{//when the zombie is blocked by wall, Human, Zombie
+                        setMovementPlan(0);
+                    }
+                    break;
+                case upZ:
+                    setDirection(up);
+                    if(!(getWorld()->doesIntersect(this, getX(), getY() + 1))){
+                        moveTo(getX(), getY() + 1);
+                        setMovementPlan(getMovementPlan() - 1);
+                    }else{//when the zombie is blocked by wall, Human, Zombie
+                        setMovementPlan(0);
+                    }
+                    break;
+                
+        } //end of switch
     }
 }//end of doSomething
 

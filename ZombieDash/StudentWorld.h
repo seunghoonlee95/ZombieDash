@@ -38,10 +38,11 @@ public:
     double determineDistToPenelope(Actor* actorPtr);
     void determineDistToZombie();
     bool throwVomit(Zombie* zombiePtr);
-    bool findClosestPerson(Zombie* zombiePtr);
+    bool findClosestPersonAndFollow(Zombie* zombiePtr);
     
-//    void followActor(Actor* followerPtr, Actor* destPtr, int moveDistance);
+    void followActor(Actor* followerPtr, Actor* destPtr, int moveDistance);
     void followPenelope(Actor* actorPtr, int moveDistance);
+    void citizenBecomeZombie(Actor* citizenPtr);
 
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}

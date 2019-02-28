@@ -16,7 +16,7 @@ class Actor : public GraphObject{
 public:
     //Simple Constructor
     Actor(StudentWorld* stdPtr, int imageID, double startX, double startY, Direction dir, int depth, double size)
-    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false), m_isInfected(false),m_canHoldVaccine(false), m_numVaccines(0)
+    :GraphObject(imageID, startX, startY, dir, depth, size), m_stdPtr(stdPtr), m_passable(false), m_isAlive(true), m_canBeBurned(true), m_canUseExit(false), m_canBeInfected(true),m_canStepOnLandmine(false), m_explosive(false), m_blockFireVomit(false), m_canFallIntoPit(false), m_isInfected(false),m_canHoldVaccine(false), m_numVaccines(0), m_canKillAgent(false)
     {
     }
     virtual ~Actor(){}
@@ -46,6 +46,8 @@ public:
     void setIsInfected(bool infectionStatus){m_isInfected = infectionStatus;}
     bool getCanHoldVaccine(){return m_canHoldVaccine;}
     void setCanHoldVaccine(bool canHold){m_canHoldVaccine = canHold;}
+    void setCanKillAgent(bool canKill){m_canKillAgent = true;}
+    bool getCanKillAgent(){return m_canKillAgent;}
 
     int getNumVaccines(){return m_numVaccines;}
     void changeNumVaccines(int num){m_numVaccines += num;}
@@ -66,6 +68,7 @@ private:
     bool m_canFallIntoPit;
     bool m_canHoldVaccine;
     int m_numVaccines;
+    bool m_canKillAgent;
 
 
 };
@@ -131,7 +134,7 @@ public:
         setCanBeBurned(false);
         setCanBeInfected(false);
         setPassable(true);
-
+        setCanKillAgent(true);
     }
     virtual ~Pit(){}
     void doSomething();
@@ -147,6 +150,7 @@ public:
         setCanBeBurned(false);
         setPassable(true);
         setCanStepOnLandmine(true);
+        setCanKillAgent(true);
     }
     virtual ~Flame(){}
     void doSomething();
@@ -165,6 +169,7 @@ public:
         setCanBeInfected(false);
         setCanBeBurned(true);
         setExplosive(true);
+        setCanKillAgent(true);
     }
     virtual ~Landmine(){}
     void doSomething();
@@ -258,7 +263,7 @@ private:
 class Human : public Agent{
 public:
     Human(StudentWorld* stdWorld, int imageID, double startX, double startY)
-    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0)
+    :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0), m_playedSoundInfected(false)
     {
         setCanUseExit(true);
         setCanHoldVaccine(true);
@@ -266,9 +271,12 @@ public:
     virtual ~Human(){}
     int getInfectionCount(){return m_infectionCount;}
     void setInfectionCount(int infCount){m_infectionCount = infCount;}
+    void setPlayedSoundInfected(bool played){m_playedSoundInfected = played;}
+    bool getPlayedSoundInfected(){return m_playedSoundInfected;}
 
 private:
     int m_infectionCount;
+    bool m_playedSoundInfected;
 };
 
 class Zombie : public Agent{

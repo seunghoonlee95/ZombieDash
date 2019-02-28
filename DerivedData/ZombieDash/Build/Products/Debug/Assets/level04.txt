@@ -4,13 +4,13 @@
 #  ooooo########
 #              #
 #            ss#
-#  C        #ss#
-#      C    #ss#
+#           #ss#
+#           #ss#
 #           #ss#
 #          L#ss#
-#      C    #ss#
 #           #ss#
-#  C        #dd#
+#           #ss#
+#           #dd#
 #        ####dd#
-#V C    C#ddddV#
+#V       #ddddV#
 ################

@@ -38,7 +38,6 @@ int StudentWorld::init(){
     }else{
         levelFile = "level" + to_string(level) + ".txt";
     }
-    
     switch(level){
         case 1:
             levelFile = "level01.txt";
@@ -62,7 +61,8 @@ int StudentWorld::init(){
     
     Level::LoadResult result = lev.loadLevel(levelFile);
     if (result == Level::load_fail_file_not_found){
-        cerr << "Cannot find level01.txt data file" << endl;
+//        cerr << "Cannot find level01.txt data file" << endl;
+        return GWSTATUS_PLAYER_WON;
     }else if (result == Level::load_fail_bad_format){
         cerr << "Your level was improperly formatted" << endl;
         return GWSTATUS_LEVEL_ERROR;
@@ -248,15 +248,15 @@ void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
     if(triggeredByFlame || doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY())){//overlaps with a player or flame
         cout << "Explode mine either by flame or Penelope!" << endl;
         
-        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), GraphObject::up));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
-        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, GraphObject::up));
         actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
-        actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY(), playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY(), GraphObject::up));
         actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
-        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, GraphObject::up));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
-        actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), playerPtr->getDirection()));
+        actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), GraphObject::up));
         minePtr->setIsAlive(false);
         playSound(SOUND_LANDMINE_EXPLODE);
         actorList.push_back(new Pit(this, minePtr->getX(), minePtr->getY()));
@@ -268,15 +268,15 @@ void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
             if(doesOverlap((*actIt)->getX(), (*actIt)->getY(), minePtr->getX(), minePtr->getY())){
                 //overlaps with a citizen/zombie or a flame.
                 cout << "citizen/zombie/flame overlapped with landmine!!" << endl;
-                actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), playerPtr->getDirection()));
+                actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), GraphObject::up));
                 actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
-                actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
+                actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, GraphObject::up));
                 actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
-                actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY(), playerPtr->getDirection()));
+                actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY(), GraphObject::up));
                 actorList.push_back(new Flame(this, minePtr->getX() + SPRITE_WIDTH, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
-                actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
+                actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() + SPRITE_HEIGHT, GraphObject::up));
                 actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY() + SPRITE_HEIGHT, playerPtr->getDirection()));
-                actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), playerPtr->getDirection()));
+                actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_HEIGHT, minePtr->getY(), GraphObject::up));
                 minePtr->setIsAlive(false);
                 playSound(SOUND_LANDMINE_EXPLODE);
                 actorList.push_back(new Pit(this, minePtr->getX(), minePtr->getY()));
@@ -341,15 +341,134 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                         return;
                     }else if((*actIt)->getCanHoldVaccine() && (*actIt)->getIsAlive()){ //need to add case do differentiate the case when zombie dies. or it can be a goodie.
                         //it's a dumb zombie
+                        if((*actIt)->getNumVaccines() == 1 && (*actIt)->getIsAlive()){//when a dumb zombie 'holds' a vaccine goodie~!
+                            //choose a random direction
+                            vector<Actor*>::iterator anotherIt;
+
+                            const int rightV = 1;
+                            const int leftV = 2;
+                            const int downV = 3;
+                            const int upV = 4;
+                            bool canDrop = true;
+                            int newDirection = randInt(1, 4);
+//                            newDirection = leftV;
+                            switch (newDirection){
+                                case rightV:
+                                    anotherIt = actorList.begin();
+                                    while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
+                                        if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX() + SPRITE_WIDTH, (*actIt)->getY())){
+                                            if(!(*anotherIt)->getCanKillAgent()){
+                                                cout << "overlaps with an object! cannot drop vaccine right!" << endl;
+                                                canDrop = false;
+                                                break;
+                                            }
+                                        }
+                                        anotherIt++;
+                                    }
+                                    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX() + SPRITE_WIDTH, (*actIt)->getY())){
+                                        cout << "overlaps with the Penelope! cannot drop vaccine right!" << endl;
+                                        canDrop = false;
+                                        break;
+                                    }
+                                    if(canDrop){
+                                        VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX() + SPRITE_WIDTH, (*actIt)->getY());
+                                        vaccineDropped->setIsFromZombie(true);
+                                        vaccineDropped->setCanBeBurned(false);
+                                        actorList.push_back(vaccineDropped);
+                                        cout << "dropped goodie right!!" << endl;
+                                        break;
+                                    }
+                                    break;
+                                case leftV:
+                                    anotherIt = actorList.begin();
+                                    while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
+                                        if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX() - SPRITE_WIDTH, (*actIt)->getY())){
+                                            if(!(*anotherIt)->getCanKillAgent()){
+                                                cout << "overlaps with an object! cannot drop vaccine left!" << endl;
+                                                canDrop = false;
+                                                break;
+                                            }
+                                        }
+                                        anotherIt++;
+                                    }
+                                    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX() - SPRITE_WIDTH, (*actIt)->getY())){
+                                        cout << "overlaps with the Penelope! cannot drop vaccine left!" << endl;
+                                        canDrop = false;
+                                        break;
+                                    }
+                                    if(canDrop){
+                                        VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX() - SPRITE_WIDTH, (*actIt)->getY());
+                                        vaccineDropped->setIsFromZombie(true);
+                                        vaccineDropped->setCanBeBurned(false);
+                                        actorList.push_back(vaccineDropped);
+                                        cout << "dropped goodie left!!" << endl;
+                                        break;
+                                    }
+                                    break;
+                                case downV:
+                                    anotherIt = actorList.begin();
+                                    while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
+                                        if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX(), (*actIt)->getY() - SPRITE_HEIGHT)){
+                                            if(!(*anotherIt)->getCanKillAgent()){
+                                                cout << "overlaps with an object! cannot drop vaccine down!" << endl;
+                                                canDrop = false;
+                                                break;
+                                            }
+                                        }
+                                        anotherIt++;
+                                    }
+                                    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX(), (*actIt)->getY() - SPRITE_HEIGHT)){
+                                        cout << "overlaps with the Penelope! cannot drop vaccine down!" << endl;
+                                        canDrop = false;
+                                        break;
+                                    }
+                                    if(canDrop){
+                                        VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY() - SPRITE_HEIGHT);
+                                        vaccineDropped->setIsFromZombie(true);
+                                        vaccineDropped->setCanBeBurned(false);
+                                        actorList.push_back(vaccineDropped);
+                                        cout << "dropped goodie down!!" << endl;
+                                        break;
+                                    }
+                                    break;
+                                case upV:
+                                    anotherIt = actorList.begin();
+                                    while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
+                                        if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX(), (*actIt)->getY() + SPRITE_HEIGHT)){
+                                            if(!(*anotherIt)->getCanKillAgent()){
+                                                cout << "overlaps with an object! cannot drop vaccine up!" << endl;
+                                                canDrop = false;
+                                                break;
+                                            }
+                                        }
+                                        anotherIt++;
+                                    }
+                                    if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX(), (*actIt)->getY() + SPRITE_HEIGHT)){
+                                        cout << "overlaps with the Penelope! cannot drop vaccine up!" << endl;
+                                        canDrop = false;
+                                        break;
+                                    }
+                                    if(canDrop){
+                                        VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY() + SPRITE_HEIGHT);
+                                        vaccineDropped->setIsFromZombie(true);
+                                        vaccineDropped->setCanBeBurned(false);
+                                        actorList.push_back(vaccineDropped);
+                                        cout << "dropped goodie up!!" << endl;
+                                        break;
+                                    }
+                                    break;
+                            } //end of switch
+                            
+                            
+//                            VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY());
+//                            vaccineDropped->setIsFromZombie(true);
+//                            vaccineDropped->setCanBeBurned(false);
+//                            actorList.push_back(vaccineDropped);
+                        }
+                        //Set the zombie to dead.
                         (*actIt)->setIsAlive(false);
                         playSound(SOUND_ZOMBIE_DIE);
                         increaseScore(1000);
-                        if((*actIt)->getNumVaccines() == 1 && (*actIt)->getIsAlive()){
-                            VaccineGoodie* vaccineDropped =new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY());
-                            vaccineDropped->setIsFromZombie(true);
-                            vaccineDropped->setCanBeBurned(false);
-                            actorList.push_back(vaccineDropped);
-                        }
                         return;
                     }else if(!(*actIt)->getCanHoldVaccine() && (*actIt)->getIsAlive()){ //it's a smart zombie
                         (*actIt)->setIsAlive(false);
@@ -455,21 +574,24 @@ double StudentWorld::determineDistToPenelope(Actor* actorPtr){
 }
 
 void StudentWorld::followPenelope(Actor *actorPtr, int moveDistance){
-    cout << "followPenelope is called here! " << endl;
+    followActor(actorPtr, playerPtr, 2);
+}
+
+void StudentWorld::followActor(Actor *followerPtr, Actor *destPtr, int moveDistance){
+//    cout << "followPenelope is called here! " << endl;
     //if the citizen is on the same row or column as Penelope
-    if(actorPtr->getX() == playerPtr->getX() || actorPtr->getY() == playerPtr->getY()){ //Citizen and Penelope are in the same column
-        if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() < playerPtr->getY()){  // Penelope is above citizen
-            moveActor(actorPtr, GraphObject::up, moveDistance);
+    if(followerPtr->getX() == destPtr->getX() || followerPtr->getY() == destPtr->getY()){ //Citizen and Penelope are in the same column
+        if(followerPtr->getX() == destPtr->getX() && followerPtr->getY() < destPtr->getY()){  // Penelope is above citizen
+            moveActor(followerPtr, GraphObject::up, moveDistance);
             
-        }else if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() > playerPtr->getY()){    // citizen is above Penelope
-            moveActor(actorPtr, GraphObject::down, moveDistance);
+        }else if(followerPtr->getX() == destPtr->getX() && followerPtr->getY() > destPtr->getY()){    // citizen is above Penelope
+            moveActor(followerPtr, GraphObject::down, moveDistance);
             
-        }else if(actorPtr->getX() < playerPtr->getX() && actorPtr->getY() == playerPtr->getY()){    // Penelope is standing right to citizen
-            moveActor(actorPtr, GraphObject::right, moveDistance);
+        }else if(followerPtr->getX() < destPtr->getX() && followerPtr->getY() == destPtr->getY()){    // Penelope is standing right to citizen
+            moveActor(followerPtr, GraphObject::right, moveDistance);
             
-        }else if(actorPtr->getX() > playerPtr->getX() && actorPtr->getY() == playerPtr->getY()){    //Citizen is standing right to Penelope.
-            moveActor(actorPtr, GraphObject::left, moveDistance);
-            
+        }else if(followerPtr->getX() > destPtr->getX() && followerPtr->getY() == destPtr->getY()){    //Citizen is standing right to Penelope.
+            moveActor(followerPtr, GraphObject::left, moveDistance);
         }
     }else{//citizen is not in the same row or column as Penelope.
         int horizontal = 0;
@@ -477,38 +599,38 @@ void StudentWorld::followPenelope(Actor *actorPtr, int moveDistance){
         int direction;
         direction = randInt(0, 1);
         if(direction == horizontal){
-            if(actorPtr->getX() < playerPtr->getX()){//when Penelope is standing right to citizen
-                if(!moveActor(actorPtr, GraphObject::right, moveDistance)){//if moving right is blocked, go vertically instead.
-                    if(actorPtr->getY() < playerPtr->getY()){//when citizen is below Penelope.
-                        moveActor(actorPtr, GraphObject::up, moveDistance);
-                    }else if(actorPtr->getY() > playerPtr->getY()){//when citizen is above Penelope.
-                        moveActor(actorPtr, GraphObject::down, moveDistance);
+            if(followerPtr->getX() < destPtr->getX()){//when Penelope is standing right to citizen
+                if(!moveActor(followerPtr, GraphObject::right, moveDistance)){//if moving right is blocked, go vertically instead.
+                    if(followerPtr->getY() < destPtr->getY()){//when citizen is below Penelope.
+                        moveActor(followerPtr, GraphObject::up, moveDistance);
+                    }else if(followerPtr->getY() > destPtr->getY()){//when citizen is above Penelope.
+                        moveActor(followerPtr, GraphObject::down, moveDistance);
                     }
                 }
-            }else if(actorPtr->getX() > playerPtr->getX()){//when citizen is standing right to Penelope
-                if(!moveActor(actorPtr, GraphObject::left, moveDistance)){//if moving left is blocked, go vertically instead
-                    if(actorPtr->getY() < playerPtr->getY()){//when citizen is below Penelope.
-                        moveActor(actorPtr, GraphObject::up, moveDistance);
-                    }else if(actorPtr->getY() > playerPtr->getY()){//when citizen is above Penelope.
-                        moveActor(actorPtr, GraphObject::down, moveDistance);
+            }else if(followerPtr->getX() > destPtr->getX()){//when citizen is standing right to Penelope
+                if(!moveActor(followerPtr, GraphObject::left, moveDistance)){//if moving left is blocked, go vertically instead
+                    if(followerPtr->getY() < destPtr->getY()){//when citizen is below Penelope.
+                        moveActor(followerPtr, GraphObject::up, moveDistance);
+                    }else if(followerPtr->getY() > destPtr->getY()){//when citizen is above Penelope.
+                        moveActor(followerPtr, GraphObject::down, moveDistance);
                     }
                 }
             }
         }else if(direction == vertical){
-            if(actorPtr->getY() < playerPtr->getY()){//when Penelope is standing above to citizen
-                if(!moveActor(actorPtr, GraphObject::up, moveDistance)){//if moving up is blocked, go horizontally instead.
-                    if(actorPtr->getX() < playerPtr->getX()){//when citizen is left to Penelope.
-                        moveActor(actorPtr, GraphObject::right, moveDistance);
-                    }else if(actorPtr->getX() > playerPtr->getX()){//when citizen is right Penelope.
-                        moveActor(actorPtr, GraphObject::left, moveDistance);
+            if(followerPtr->getY() < destPtr->getY()){//when Penelope is standing above to citizen
+                if(!moveActor(followerPtr, GraphObject::up, moveDistance)){//if moving up is blocked, go horizontally instead.
+                    if(followerPtr->getX() < destPtr->getX()){//when citizen is left to Penelope.
+                        moveActor(followerPtr, GraphObject::right, moveDistance);
+                    }else if(followerPtr->getX() > destPtr->getX()){//when citizen is right Penelope.
+                        moveActor(followerPtr, GraphObject::left, moveDistance);
                     }
                 }
-            }else if(actorPtr->getY() > playerPtr->getY()){//when Penelope is standing above to citizen
-                if(!moveActor(actorPtr, GraphObject::down, moveDistance)){//if moving down is blocked, go horizontally instead.
-                    if(actorPtr->getX() < playerPtr->getX()){//when citizen is left to Penelope.
-                        moveActor(actorPtr, GraphObject::right, moveDistance);
-                    }else if(actorPtr->getX() > playerPtr->getX()){//when citizen is right Penelope.
-                        moveActor(actorPtr, GraphObject::left, moveDistance);
+            }else if(followerPtr->getY() > destPtr->getY()){//when Penelope is standing above to citizen
+                if(!moveActor(followerPtr, GraphObject::down, moveDistance)){//if moving down is blocked, go horizontally instead.
+                    if(followerPtr->getX() < destPtr->getX()){//when citizen is left to Penelope.
+                        moveActor(followerPtr, GraphObject::right, moveDistance);
+                    }else if(followerPtr->getX() > destPtr->getX()){//when citizen is right Penelope.
+                        moveActor(followerPtr, GraphObject::left, moveDistance);
                     }
                 }
             }
@@ -580,7 +702,7 @@ bool StudentWorld::throwVomit(Zombie *zombiePtr){
     return false;
 }
 
-bool StudentWorld::findClosestPerson(Zombie *zombiePtr){
+bool StudentWorld::findClosestPersonAndFollow(Zombie *zombiePtr){
     double distanceToPenelope = determineDistToPenelope(zombiePtr);
     double distanceToCitizen = 10000;
     double minDistance;
@@ -604,21 +726,35 @@ bool StudentWorld::findClosestPerson(Zombie *zombiePtr){
     }else{
         minDistance = distanceToPenelope;
     }
-    cout << "distance to citizen : " << distanceToCitizen << endl;
-    cout << "distance to Penelope : " << distanceToPenelope << endl;
-    cout << "minDistance : " << minDistance << endl;
+//    cout << "distance to citizen : " << static_cast<int>(distanceToCitizen) << endl;
+//    cout << "distance to Penelope : " << static_cast<int>(distanceToPenelope) << endl;
+//    cout << "minDistance : " << static_cast<int>(minDistance) << endl;
 
     
     if(minDistance > 80){
         return false;
     }else{
         if(distanceToPenelope <= distanceToCitizen){    //follow Penelope.
-            followPenelope(zombiePtr, 1);
+            followActor(zombiePtr, playerPtr,1);
         }else{
-            followPenelope(closestActor, 1);
+            followActor(zombiePtr, closestActor,1);
         }
         return true;
     }
-    
-    
+}
+
+void StudentWorld::citizenBecomeZombie(Actor *citizenPtr){
+    int dumbOrSmart;
+    dumbOrSmart = randInt(1, 10);
+    citizenPtr->setIsAlive(false);
+    playSound(SOUND_ZOMBIE_BORN);
+    if(dumbOrSmart < 8){
+        cout << "citizen become a dumb zombie!" << endl;
+        increaseScore(-1000);
+        actorList.push_back(new DumbZombie(this, citizenPtr->getX(), citizenPtr->getY()));
+    }else{
+        cout << "citizen become a dumb zombie!" << endl;
+        increaseScore(-1000);
+        actorList.push_back(new SmartZombie(this, citizenPtr->getX(), citizenPtr->getY()));
+    }
 }
