@@ -704,12 +704,12 @@ bool StudentWorld::throwVomit(Zombie *zombiePtr){
     return false;
 }
 
-double StudentWorld::determineDistToClosestZombie(Actor *citizenPtr){
+double StudentWorld::determineDistToClosestZombie(double citizenX, double citizenY){
     double minDistance = 1000000;
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end() && *actIt != nullptr){
         if((*actIt)->getCanFallIntoPit() && !(*actIt)->getCanBeInfected()){//it's a zombie
-            double temp = sqrt(pow(citizenPtr->getX() - (*actIt)->getX(), 2) + pow(citizenPtr->getY() - (*actIt)->getY(), 2));
+            double temp = sqrt(pow(citizenX - (*actIt)->getX(), 2) + pow(citizenY - (*actIt)->getY(), 2));
             if(temp <= minDistance){
                 minDistance = temp;
             }
@@ -776,4 +776,62 @@ void StudentWorld::citizenBecomeZombie(Actor *citizenPtr){
         increaseScore(-1000);
         actorList.push_back(new SmartZombie(this, citizenPtr->getX(), citizenPtr->getY()));
     }
+}
+
+void StudentWorld::runaway(Actor *citizenPtr){
+    double minDistToZombie = determineDistToClosestZombie(citizenPtr->getX(), citizenPtr->getY());
+    double distAfterMoving = minDistToZombie;
+    int moveDirection = 0;
+    
+    if(!doesIntersect(citizenPtr, citizenPtr->getX() + 2, citizenPtr->getY())){//can move right
+        double temp = determineDistToClosestZombie(citizenPtr->getX() + 2, citizenPtr->getY());
+        if(temp > distAfterMoving){
+            moveDirection = 1;
+        }
+    }
+    if(!doesIntersect(citizenPtr, citizenPtr->getX() - 2, citizenPtr->getY())){//can move left
+        double temp = determineDistToClosestZombie(citizenPtr->getX() + 2, citizenPtr->getY());
+        if(temp > distAfterMoving){
+            moveDirection = 2;
+        }
+    }
+    if(!doesIntersect(citizenPtr, citizenPtr->getX(), citizenPtr->getY() + 2)){//can move up
+        double temp = determineDistToClosestZombie(citizenPtr->getX(), citizenPtr->getY() + 2);
+        if(temp > distAfterMoving){
+            moveDirection = 3;
+        }
+    }
+    if(!doesIntersect(citizenPtr, citizenPtr->getX(), citizenPtr->getY() - 2)){//can move down
+        double temp = determineDistToClosestZombie(citizenPtr->getX(), citizenPtr->getY() - 2);
+        if(temp > distAfterMoving){
+            moveDirection = 4;
+        }
+    }
+    if(moveDirection == 0){
+        return;
+    }
+    
+    switch (moveDirection) {
+        case 1:
+            citizenPtr->setDirection(GraphObject::right);
+            citizenPtr->moveTo(citizenPtr->getX() + 2, citizenPtr->getY());
+            break;
+        case 2:
+            citizenPtr->setDirection(GraphObject::left);
+            citizenPtr->moveTo(citizenPtr->getX() - 2, citizenPtr->getY());
+            break;
+        case 3:
+            citizenPtr->setDirection(GraphObject::up);
+            citizenPtr->moveTo(citizenPtr->getX(), citizenPtr->getY() + 2);
+            break;
+        case 4:
+            citizenPtr->setDirection(GraphObject::down);
+            citizenPtr->moveTo(citizenPtr->getX(), citizenPtr->getY() - 2);
+            break;
+
+    }
+    return;
+
+    
+    
 }

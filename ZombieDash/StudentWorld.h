@@ -36,7 +36,7 @@ public:
     void explodeMine(Actor* minePtr, bool triggeredByFlame);
     void fallIntoPit(Actor* pitPtr);
     double determineDistToPenelope(Actor* actorPtr);
-    double determineDistToClosestZombie(Actor* citizenPtr);
+    double determineDistToClosestZombie(double citizenX, double citizenY);
     
     bool throwVomit(Zombie* zombiePtr);
     bool findClosestPersonAndFollow(Zombie* zombiePtr);
@@ -44,6 +44,7 @@ public:
     void followActor(Actor* followerPtr, Actor* destPtr, int moveDistance);
     void followPenelope(Actor* actorPtr, int moveDistance);
     void citizenBecomeZombie(Actor* citizenPtr);
+    void runaway(Actor* citizenPtr);
 
     
 //    void setGotVaccine(bool status){m_gotVaccine = status;}

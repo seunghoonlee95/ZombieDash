@@ -188,7 +188,7 @@ void Citizen::doSomething(){
         return;
     }
     setDistP(getWorld()->determineDistToPenelope(this));
-    setDistZ(getWorld()->determineDistToClosestZombie(this));
+    setDistZ(getWorld()->determineDistToClosestZombie(this->getX(), this->getY()));
 //    cout << "dist_p : " << getDistP() << endl;
 //    cout << "dist_z : " << getDistZ() << endl;
 
@@ -196,6 +196,11 @@ void Citizen::doSomething(){
 //        cout << "distance is below 80 follow Penelope!" << endl;
         getWorld()->followPenelope(this,2);
         return;
+    }
+    
+    if(getDistZ() <= 80.0){//run away!
+        cout << "runaway!"<<endl;
+        getWorld()->runaway(this);
     }
 
 }
