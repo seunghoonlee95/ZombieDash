@@ -22,6 +22,7 @@ class StudentWorld : public GameWorld
 {
 public:
     StudentWorld(std::string assetPath);
+    
     virtual ~StudentWorld(){
         cleanUp();
     }
@@ -40,14 +41,9 @@ public:
     
     bool throwVomit(Zombie* zombiePtr);
     bool findClosestPersonAndFollow(Zombie* zombiePtr);
-    
-    void followActor(Actor* followerPtr, Actor* destPtr, int moveDistance);
     void followPenelope(Actor* actorPtr, int moveDistance);
     void citizenBecomeZombie(Actor* citizenPtr);
     void runaway(Actor* citizenPtr);
-
-    bool getFinishedLevel(){return m_finishedLevel;}
-    void setFinishedLevel(bool status){m_finishedLevel = status;}
 
     void incrementVaccine();
     void incrementFlameCount();
@@ -55,16 +51,18 @@ public:
     void plantLandmine();
     void damageObjects(Actor* flamePtr);
     void infectObjects(Actor* vomitPtr);
-    bool moveActor(Actor* actorPtr, Direction dir, int moveDistance);
-    int getNumZombies(){return m_numZombies;}
-    void setNumZombies(int num){m_numZombies += num;}
-    void setSmartZombieDirection(Actor* zombiePtr, Actor* actorPtr);
     
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
+
+protected:
     bool m_finishedLevel;
-    int m_numZombies;
+    void followActor(Actor* followerPtr, Actor* destPtr, int moveDistance);
+    bool getFinishedLevel(){return m_finishedLevel;}
+    void setFinishedLevel(bool status){m_finishedLevel = status;}
+    void setSmartZombieDirection(Actor* zombiePtr, Actor* actorPtr);
+    bool moveActor(Actor* actorPtr, Direction dir, int moveDistance);
 
 };
 

@@ -13,7 +13,6 @@ void Penelope::doSomething(){
     if(getIsAlive() == false){//check to see if she is still alive
         return;
     }
-
     if(getIsInfected()){
         if(getPlayedSoundInfected() == false){
             getWorld()->playSound(SOUND_CITIZEN_INFECTED);
@@ -23,7 +22,6 @@ void Penelope::doSomething(){
         if(getInfectionCount() == 500){
             setIsAlive(false);
             return;
-            //            getWorld()->playSound(SOUND_PLAYER_DIE);
         }
     }
     int ch;
@@ -90,12 +88,10 @@ void Goodie::pickUp(){
 }
 
 void VaccineGoodie::grantSpecificGoodieReward(){
-//    getWorld()->setGotVaccine(true);
     getWorld()->incrementVaccine();
 }
 
 void GasCanGoodie::grantSpecificGoodieReward(){
-//    getWorld()->setGotFlames(true);
     getWorld()->incrementFlameCount();
 }
 
@@ -115,13 +111,7 @@ void Pit::doSomething(){
 void VaccineGoodie::doSomething(){
     if(getIsAlive() == false){
         return;
-    }
-    if(getIsFromZombie()){
-        setTicksPassed(getTicksPassed() + 1);
-        if(getTicksPassed() == 2){
-            setCanBeBurned(true);
-        }
-    }
+    }    
     pickUp();
 }
 
@@ -184,22 +174,17 @@ void Citizen::doSomething(){
         }
     }
     if(getTicksPassed() % 2 == 0){
-//        cout << "freeze in this tick : " << getTicksPassed() << endl;
         return;
     }
     setDistP(getWorld()->determineDistToPenelope(this));
     setDistZ(getWorld()->determineDistToClosestZombie(this->getX(), this->getY()));
-//    cout << "dist_p : " << getDistP() << endl;
-//    cout << "dist_z : " << getDistZ() << endl;
 
     if(getDistP() < getDistZ() && getDistP() <= 80.0){
-//        cout << "distance is below 80 follow Penelope!" << endl;
         getWorld()->followPenelope(this,2);
         return;
     }
     
     if(getDistZ() <= 80.0){//run away!
-//        cout << "runaway!"<<endl;
         getWorld()->runaway(this);
     }
 
@@ -252,7 +237,6 @@ void DumbZombie::doSomething(){
     }
     if(getMovementPlan() == 0){
         setMovementPlan(randInt(3, 10));
-//        cout << "dumb zombie's new movement plan : " << getMovementPlan() << endl;
     }
 
         const int rightZ = 1;
@@ -306,7 +290,6 @@ void SmartZombie::doSomething(){
     }
     setTicksPassed(getTicksPassed() + 1);
     if(getTicksPassed() % 2 == 0){
-//        cout << "stop" << endl;
         return;
     }
     computeVomitCoor(this, getDirection());
@@ -315,7 +298,6 @@ void SmartZombie::doSomething(){
     }
     if(getMovementPlan() == 0){
         setMovementPlan(randInt(3, 10));
-//        cout << "smart zombie's new movement plan : " << getMovementPlan()<< endl;
     }
 
     bool foundClosestPerson;
@@ -346,7 +328,6 @@ void SmartZombie::doSomething(){
         Direction zombieDir = getDirection();
         switch (zombieDir){
             case right:
-                //                    setDirection(right);
                 if(!(getWorld()->doesIntersect(this, getX() + 1, getY()))){
                     moveTo(getX() + 1, getY());
                     setMovementPlan(getMovementPlan() - 1);
@@ -356,7 +337,6 @@ void SmartZombie::doSomething(){
                 return;
                 break;
             case left:
-                //                    setDirection(left);
                 if(!(getWorld()->doesIntersect(this, getX() - 1, getY()))){
                     moveTo(getX() - 1, getY());
                     setMovementPlan(getMovementPlan() - 1);
@@ -366,7 +346,6 @@ void SmartZombie::doSomething(){
                 return;
                 break;
             case down:
-                //                    setDirection(down);
                 if(!(getWorld()->doesIntersect(this, getX(), getY() - 1))){
                     moveTo(getX(), getY() - 1);
                     setMovementPlan(getMovementPlan() - 1);
@@ -376,7 +355,6 @@ void SmartZombie::doSomething(){
                 return;
                 break;
             case up:
-                //                    setDirection(up);
                 if(!(getWorld()->doesIntersect(this, getX(), getY() + 1))){
                     moveTo(getX(), getY() + 1);
                     setMovementPlan(getMovementPlan() - 1);
@@ -385,57 +363,7 @@ void SmartZombie::doSomething(){
                 }
                 return;
                 break;
-                
         } //end of switch
-        
-        
     }
-
-//    Direction zombieDir = getDirection();
-//            switch (zombieDir){
-//                case right:
-////                    setDirection(right);
-//                    if(!(getWorld()->doesIntersect(this, getX() + 1, getY()))){
-//                        moveTo(getX() + 1, getY());
-//                        setMovementPlan(getMovementPlan() - 1);
-//                    }else{//when the zombie is blocked by wall, Human, Zombie
-//                        setMovementPlan(0);
-//                    }
-//                    return;
-//                    break;
-//                case left:
-////                    setDirection(left);
-//                    if(!(getWorld()->doesIntersect(this, getX() - 1, getY()))){
-//                        moveTo(getX() - 1, getY());
-//                        setMovementPlan(getMovementPlan() - 1);
-//                    }else{//when the zombie is blocked by wall, Human, Zombie
-//                        setMovementPlan(0);
-//                    }
-//                    return;
-//                    break;
-//                case down:
-////                    setDirection(down);
-//                    if(!(getWorld()->doesIntersect(this, getX(), getY() - 1))){
-//                        moveTo(getX(), getY() - 1);
-//                        setMovementPlan(getMovementPlan() - 1);
-//                    }else{//when the zombie is blocked by wall, Human, Zombie
-//                        setMovementPlan(0);
-//                    }
-//                    return;
-//                    break;
-//                case up:
-////                    setDirection(up);
-//                    if(!(getWorld()->doesIntersect(this, getX(), getY() + 1))){
-//                        moveTo(getX(), getY() + 1);
-//                        setMovementPlan(getMovementPlan() - 1);
-//                    }else{//when the zombie is blocked by wall, Human, Zombie
-//                        setMovementPlan(0);
-//                    }
-//                    return;
-//                    break;
-//
-//        } //end of switch
-    
-    
-}//end of doSomething
+}//end of SmartZombie's doSomething
 
