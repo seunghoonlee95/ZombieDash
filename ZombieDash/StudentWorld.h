@@ -46,13 +46,9 @@ public:
     void citizenBecomeZombie(Actor* citizenPtr);
     void runaway(Actor* citizenPtr);
 
-    
-//    void setGotVaccine(bool status){m_gotVaccine = status;}
-//    bool getGotVaccine(){return m_gotVaccine;}
     bool getFinishedLevel(){return m_finishedLevel;}
     void setFinishedLevel(bool status){m_finishedLevel = status;}
-//    bool getGotFlames(){return m_gotFlames;}
-//    void setGotFlames(bool status){m_gotFlames = status;}
+
     void incrementVaccine();
     void incrementFlameCount();
     void incrementLandmineCount();
@@ -62,15 +58,14 @@ public:
     bool moveActor(Actor* actorPtr, Direction dir, int moveDistance);
     int getNumZombies(){return m_numZombies;}
     void setNumZombies(int num){m_numZombies += num;}
-
+    void setSmartZombieDirection(Actor* zombiePtr, Actor* actorPtr);
     
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
     bool m_finishedLevel;
     int m_numZombies;
-//    bool m_gotVaccine;
-//    bool m_gotFlames;
+
 };
 
 #endif // STUDENTWORLD_H_

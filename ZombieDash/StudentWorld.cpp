@@ -11,7 +11,6 @@
 
 using namespace std;
 
-//returns a pointer to GameWorld!!!- seems useful...?
 GameWorld* createStudentWorld(string assetPath)
 {
     return new StudentWorld(assetPath);
@@ -29,7 +28,6 @@ int StudentWorld::init(){
     Level lev(assetPath());
     int level;
     level = getLevel();
-    //    cout << "level : " << level << endl;
     string levelFile;
     if(level < 0){
         return GWSTATUS_LEVEL_ERROR; // Not sure!!
@@ -118,7 +116,7 @@ int StudentWorld::init(){
 int StudentWorld::move(){
     
     string gameStatus = "";
-    gameStatus = "Score: " + to_string(getScore()) + "  Level: " + to_string(getLevel()) + "  Lives: " + to_string(getLives()) + "  Vaccines: " + to_string(playerPtr->getNumVaccines()) + "  Flames: " + to_string(playerPtr->getNumFlames()) + "  Mines: " + to_string(playerPtr->getNumLandmines()) + "  Infected: " + to_string(playerPtr->getInfectionCount());
+    gameStatus = "Score: " + (to_string(getScore())) + "  Level: " + to_string(getLevel()) + "  Lives: " + to_string(getLives()) + "  Vaccines: " + to_string(playerPtr->getNumVaccines()) + "  Flames: " + to_string(playerPtr->getNumFlames()) + "  Mines: " + to_string(playerPtr->getNumLandmines()) + "  Infected: " + to_string(playerPtr->getInfectionCount());
     
     setGameStatText(gameStatus);
     
@@ -738,8 +736,6 @@ bool StudentWorld::findClosestPersonAndFollow(Zombie *zombiePtr){
         }
         actIt++;
     }
-
-
     if(distanceToPenelope > distanceToCitizen){
         minDistance = distanceToCitizen;
     }else{
@@ -749,17 +745,50 @@ bool StudentWorld::findClosestPersonAndFollow(Zombie *zombiePtr){
 //    cout << "distance to Penelope : " << static_cast<int>(distanceToPenelope) << endl;
 //    cout << "minDistance : " << static_cast<int>(minDistance) << endl;
 
-    
     if(minDistance > 80){
         return false;
     }else{
         if(distanceToPenelope <= distanceToCitizen){    //follow Penelope.
             followActor(zombiePtr, playerPtr,1);
+            setSmartZombieDirection(zombiePtr, playerPtr);
         }else{
             followActor(zombiePtr, closestActor,1);
+            setSmartZombieDirection(zombiePtr, closestActor);
         }
         return true;
     }
+}
+
+void StudentWorld::setSmartZombieDirection(Actor* zombiePtr, Actor* actorPtr){
+    if(zombiePtr->getX() == actorPtr->getX() || zombiePtr->getY() == actorPtr->getY()){//when zombie is on the same row/column as the person
+        if(zombiePtr->getX() > actorPtr->getX() && zombiePtr->getY() == actorPtr->getY()){//when zombie is on the right of actor
+            zombiePtr->setDirection(GraphObject::left);
+        }else if(zombiePtr->getX() < actorPtr->getX() && zombiePtr->getY() == actorPtr->getY()){
+            zombiePtr->setDirection(GraphObject::right);
+        }else if(zombiePtr->getX() == actorPtr->getX() && zombiePtr->getY() > actorPtr->getY()){//when zombie is above the actor
+            zombiePtr->setDirection(GraphObject::down);
+        }else if(zombiePtr->getX() == actorPtr->getX() && zombiePtr->getY() < actorPtr->getY()){//when zombie is above the actor
+            zombiePtr->setDirection(GraphObject::up);
+        }
+    }else{//when zombie is neither at the same row/ column of actor
+        int horizontal = 1;
+        int vertical = 2;
+        int direction = randInt(1, 2);
+        if(direction == horizontal){
+            if(zombiePtr->getY() > actorPtr->getY()){   //when zombie is above actor
+                zombiePtr->setDirection(GraphObject::down);
+            }else if(zombiePtr->getY() < actorPtr->getY()){ //when zombie is below actor
+                zombiePtr->setDirection(GraphObject::up);
+            }
+        }else if(direction == vertical){
+            if(zombiePtr->getX() > actorPtr->getX()){   //when zombie is right to actor
+                zombiePtr->setDirection(GraphObject::left);
+            }else if(zombiePtr->getX() < actorPtr->getX()){ //when zombie is left to actor
+                zombiePtr->setDirection(GraphObject::right);
+            }
+        }
+    }
+    
 }
 
 void StudentWorld::citizenBecomeZombie(Actor *citizenPtr){
