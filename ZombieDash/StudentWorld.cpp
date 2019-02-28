@@ -20,7 +20,7 @@ GameWorld* createStudentWorld(string assetPath)
 // Students:  Add code to this file, StudentWorld.h, Actor.h and Actor.cpp
 
 StudentWorld::StudentWorld(string assetPath)
-: GameWorld(assetPath), playerPtr(nullptr), m_finishedLevel(false) /*, m_gotVaccine(false), m_gotFlames(false)*/
+: GameWorld(assetPath), playerPtr(nullptr), m_finishedLevel(false), m_numZombies(0)
 {
     actorList.reserve(256);
 }
@@ -76,9 +76,11 @@ int StudentWorld::init(){
                         break;
                     case Level::smart_zombie:
                         actorList.push_back(new SmartZombie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        setNumZombies(1);
                         break;
                     case Level::dumb_zombie:
                         actorList.push_back(new DumbZombie(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
+                        setNumZombies(1);
                         break;
                     case Level::citizen:
                         actorList.push_back(new Citizen(this, SPRITE_WIDTH * x, SPRITE_HEIGHT * y));
@@ -702,9 +704,26 @@ bool StudentWorld::throwVomit(Zombie *zombiePtr){
     return false;
 }
 
+double StudentWorld::determineDistToClosestZombie(Actor *citizenPtr){
+    double minDistance = 1000000;
+    vector<Actor*>::iterator actIt = actorList.begin();
+    while(actIt != actorList.end() && *actIt != nullptr){
+        if((*actIt)->getCanFallIntoPit() && !(*actIt)->getCanBeInfected()){//it's a zombie
+            double temp = sqrt(pow(citizenPtr->getX() - (*actIt)->getX(), 2) + pow(citizenPtr->getY() - (*actIt)->getY(), 2));
+            if(temp <= minDistance){
+                minDistance = temp;
+            }
+        }
+        actIt++;
+    }
+//    cout << "minDistance : " << minDistance << endl;
+    return minDistance;
+
+}
+
 bool StudentWorld::findClosestPersonAndFollow(Zombie *zombiePtr){
     double distanceToPenelope = determineDistToPenelope(zombiePtr);
-    double distanceToCitizen = 10000;
+    double distanceToCitizen = 1000000;
     double minDistance;
     Actor* closestActor;
     

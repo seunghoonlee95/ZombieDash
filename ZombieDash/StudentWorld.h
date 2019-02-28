@@ -36,7 +36,8 @@ public:
     void explodeMine(Actor* minePtr, bool triggeredByFlame);
     void fallIntoPit(Actor* pitPtr);
     double determineDistToPenelope(Actor* actorPtr);
-    void determineDistToZombie();
+    double determineDistToClosestZombie(Actor* citizenPtr);
+    
     bool throwVomit(Zombie* zombiePtr);
     bool findClosestPersonAndFollow(Zombie* zombiePtr);
     
@@ -58,12 +59,15 @@ public:
     void damageObjects(Actor* flamePtr);
     void infectObjects(Actor* vomitPtr);
     bool moveActor(Actor* actorPtr, Direction dir, int moveDistance);
+    int getNumZombies(){return m_numZombies;}
+    void setNumZombies(int num){m_numZombies += num;}
 
     
 private:
     vector<Actor*> actorList;
     Penelope* playerPtr;
     bool m_finishedLevel;
+    int m_numZombies;
 //    bool m_gotVaccine;
 //    bool m_gotFlames;
 };
