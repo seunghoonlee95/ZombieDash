@@ -455,6 +455,7 @@ double StudentWorld::determineDistToPenelope(Actor* actorPtr){
 }
 
 void StudentWorld::followPenelope(Actor *actorPtr, int moveDistance){
+    cout << "followPenelope is called here! " << endl;
     //if the citizen is on the same row or column as Penelope
     if(actorPtr->getX() == playerPtr->getX() || actorPtr->getY() == playerPtr->getY()){ //Citizen and Penelope are in the same column
         if(actorPtr->getX() == playerPtr->getX() && actorPtr->getY() < playerPtr->getY()){  // Penelope is above citizen
@@ -583,27 +584,41 @@ bool StudentWorld::findClosestPerson(Zombie *zombiePtr){
     double distanceToPenelope = determineDistToPenelope(zombiePtr);
     double distanceToCitizen = 10000;
     double minDistance;
+    Actor* closestActor;
+    
     vector<Actor*>::iterator actIt = actorList.begin();
     while(actIt != actorList.end() && *actIt != nullptr){
-        
-        double temp = sqrt(pow(zombiePtr->getX() - (*actIt)->getX(), 2) + pow(zombiePtr->getY() - (*actIt)->getY(), 2));
-        if(temp <= distanceToCitizen){
-            distanceToCitizen = temp;
+        if((*actIt)->getCanBeInfected()){//if it's a citizen
+            double temp = sqrt(pow(zombiePtr->getX() - (*actIt)->getX(), 2) + pow(zombiePtr->getY() - (*actIt)->getY(), 2));
+            if(temp <= distanceToCitizen){
+                distanceToCitizen = temp;
+                closestActor = *actIt;
+            }
         }
         actIt++;
     }
+
+
     if(distanceToPenelope > distanceToCitizen){
         minDistance = distanceToCitizen;
     }else{
         minDistance = distanceToPenelope;
     }
+    cout << "distance to citizen : " << distanceToCitizen << endl;
+    cout << "distance to Penelope : " << distanceToPenelope << endl;
+    cout << "minDistance : " << minDistance << endl;
+
     
     if(minDistance > 80){
         return false;
     }else{
         if(distanceToPenelope <= distanceToCitizen){    //follow Penelope.
             followPenelope(zombiePtr, 1);
+        }else{
+            followPenelope(closestActor, 1);
         }
         return true;
     }
+    
+    
 }
