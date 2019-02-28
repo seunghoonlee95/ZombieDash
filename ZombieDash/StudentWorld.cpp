@@ -5,9 +5,11 @@
 #include "Level.h"
 #include <string>
 #include <vector>
-#include <iostream>
 #include <cstdlib>
 #include <math.h>
+#include <iostream>
+#include <sstream>
+#include <iomanip>
 
 using namespace std;
 
@@ -116,7 +118,17 @@ int StudentWorld::init(){
 int StudentWorld::move(){
     
     string gameStatus = "";
-    gameStatus = "Score: " + (to_string(getScore())) + "  Level: " + to_string(getLevel()) + "  Lives: " + to_string(getLives()) + "  Vaccines: " + to_string(playerPtr->getNumVaccines()) + "  Flames: " + to_string(playerPtr->getNumFlames()) + "  Mines: " + to_string(playerPtr->getNumLandmines()) + "  Infected: " + to_string(playerPtr->getInfectionCount());
+    string gameScore;
+    ostringstream oss;
+    oss.setf(ios::fixed);
+    
+    oss.fill('0');
+    oss << setw(6) << to_string(getScore());
+    gameScore = oss.str();
+    
+    cout << "score : " << gameScore << endl;
+    
+    gameStatus = "Score: " + gameScore + "  Level: " + to_string(getLevel()) + "  Lives: " + to_string(getLives()) + "  Vaccines: " + to_string(playerPtr->getNumVaccines()) + "  Flames: " + to_string(playerPtr->getNumFlames()) + "  Mines: " + to_string(playerPtr->getNumLandmines()) + "  Infected: " + to_string(playerPtr->getInfectionCount());
     
     setGameStatText(gameStatus);
     
