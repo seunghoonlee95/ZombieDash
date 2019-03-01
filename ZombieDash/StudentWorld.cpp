@@ -719,11 +719,12 @@ bool StudentWorld::findClosestPersonAndFollow(Zombie *zombiePtr){
         return false;
     }else{
         if(distanceToPenelope <= distanceToCitizen){    //follow Penelope.
-            followActor(zombiePtr, playerPtr,1);
             setSmartZombieDirection(zombiePtr, playerPtr);
+//            followPenelope(zombiePtr, 1);
+            followActor(zombiePtr, playerPtr,1);
         }else{
-            followActor(zombiePtr, closestCitizen,1);
             setSmartZombieDirection(zombiePtr, closestCitizen);
+            followActor(zombiePtr, closestCitizen,1);   //follow citizen
         }
         return true;
     }

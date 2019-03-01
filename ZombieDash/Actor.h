@@ -222,6 +222,7 @@ public:
     }
     virtual ~LandmineGoodie(){}
     void doSomething();
+protected:
     virtual void grantSpecificGoodieReward();
 };
 
@@ -245,7 +246,6 @@ public:
     :Agent(stdWorld, imageID, startX, startY, right, 0, 1.0), m_infectionCount(0), m_playedSoundInfected(false)
     {
         setCanUseExit(true);
-        setCanHoldVaccine(true);
     }
     virtual ~Human(){}
     int getInfectionCount(){return m_infectionCount;}
@@ -264,6 +264,8 @@ public:
     :Human(stdWorld, IID_PLAYER, startX, startY), m_numLandmines(0), m_numFlames(0)
     {
         setIsAlive(true);
+        setCanHoldVaccine(true);
+
     }
     virtual ~Penelope(){}
     void doSomething();
