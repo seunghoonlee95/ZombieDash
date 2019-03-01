@@ -29,8 +29,8 @@ public:
     virtual int init();
     virtual int move();
     virtual void cleanUp();
-    bool doesIntersect(Actor* sameActor, double x, double y);
-    bool doesOverlap(double actorX, double actorY, double x, double y);
+    bool doesIntersect(Actor* actorPtr, double destX, double destY);
+    bool doesOverlap(double actorX, double actorY, double otherX, double otherY);
     void escapeHumans(double exitX, double exitY);
     bool doesOverlapWithPlayer(double actorX, double actorY);
     void blastFlame();

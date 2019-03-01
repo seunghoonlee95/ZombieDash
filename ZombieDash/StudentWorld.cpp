@@ -241,9 +241,15 @@ void StudentWorld::fallIntoPit(Actor *pitPtr){
                     playSound(SOUND_CITIZEN_DIE);
                     increaseScore(-1000);
                 }else{//when a zombie falls into a pit.
-                    (*actIt)->setIsAlive(false);
-                    playSound(SOUND_ZOMBIE_DIE);
-                    //increaseScore(2000); //Depends on whether it's a smart or dumb zombie..
+                    if((*actIt)->getCanHoldVaccine()){//dumb zombie
+                        (*actIt)->setIsAlive(false);
+                        playSound(SOUND_ZOMBIE_DIE);
+                        increaseScore(1000);
+                    }else if(!(*actIt)->getCanHoldVaccine()){  //smart zombie
+                        (*actIt)->setIsAlive(false);
+                        playSound(SOUND_ZOMBIE_DIE);
+                        increaseScore(2000);
+                    }
                 }
             }
         }
@@ -254,7 +260,6 @@ void StudentWorld::fallIntoPit(Actor *pitPtr){
 
 void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
     if(triggeredByFlame || doesOverlap(playerPtr->getX(), playerPtr->getY(), minePtr->getX(), minePtr->getY())){//overlaps with a player or flame
-        cout << "Explode mine either by flame or Penelope!" << endl;
         
         actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), GraphObject::up));
         actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
@@ -275,7 +280,6 @@ void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
         if((*actIt)->getCanStepOnLandmine() == true){
             if(doesOverlap((*actIt)->getX(), (*actIt)->getY(), minePtr->getX(), minePtr->getY())){
                 //overlaps with a citizen/zombie or a flame.
-                cout << "citizen/zombie/flame overlapped with landmine!!" << endl;
                 actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY(), GraphObject::up));
                 actorList.push_back(new Flame(this, minePtr->getX() - SPRITE_WIDTH, minePtr->getY() - SPRITE_HEIGHT, playerPtr->getDirection()));
                 actorList.push_back(new Flame(this, minePtr->getX(), minePtr->getY() - SPRITE_HEIGHT, GraphObject::up));
@@ -288,7 +292,6 @@ void StudentWorld::explodeMine(Actor* minePtr, bool triggeredByFlame){
                 minePtr->setIsAlive(false);
                 playSound(SOUND_LANDMINE_EXPLODE);
                 actorList.push_back(new Pit(this, minePtr->getX(), minePtr->getY()));
-                cout<<"executed until here~(end of explodeMine method)" << endl;
                 return;
                 
             }
@@ -344,7 +347,6 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                     if((*actIt)->getCanBeInfected() && (*actIt)->getIsAlive()){//when citizen dies due to flame
                         (*actIt)->setIsAlive(false);
                         playSound(SOUND_CITIZEN_DIE);
-                        cout << "citizen died " << endl;
                         increaseScore(-1000);
                         return;
                     }else if((*actIt)->getCanHoldVaccine() && (*actIt)->getIsAlive()){ //need to add case do differentiate the case when zombie dies. or it can be a goodie.
@@ -364,20 +366,17 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                                     anotherIt = actorList.begin();
                                     while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
                                         if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX() + SPRITE_WIDTH, (*actIt)->getY())){
-                                                cout << "overlaps with an object! cannot drop vaccine right!" << endl;
                                                 canDrop = false;
                                                 break;
                                         }
                                         anotherIt++;
                                     }
                                     if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX() + SPRITE_WIDTH, (*actIt)->getY())){
-                                        cout << "overlaps with the Penelope! cannot drop vaccine right!" << endl;
                                         canDrop = false;
                                         break;
                                     }
                                     if(canDrop){
                                         actorList.push_back(new VaccineGoodie(this, (*actIt)->getX() + SPRITE_WIDTH, (*actIt)->getY()));
-                                        cout << "dropped goodie right!!" << endl;
                                         break;
                                     }
                                     break;
@@ -385,20 +384,17 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                                     anotherIt = actorList.begin();
                                     while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
                                         if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX() - SPRITE_WIDTH, (*actIt)->getY())){
-                                                cout << "overlaps with an object! cannot drop vaccine left!" << endl;
                                                 canDrop = false;
                                                 break;
                                         }
                                         anotherIt++;
                                     }
                                     if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX() - SPRITE_WIDTH, (*actIt)->getY())){
-                                        cout << "overlaps with the Penelope! cannot drop vaccine left!" << endl;
                                         canDrop = false;
                                         break;
                                     }
                                     if(canDrop){
                                         actorList.push_back(new VaccineGoodie(this, (*actIt)->getX() - SPRITE_WIDTH, (*actIt)->getY()));
-                                        cout << "dropped goodie left!!" << endl;
                                         break;
                                     }
                                     break;
@@ -406,20 +402,17 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                                     anotherIt = actorList.begin();
                                     while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
                                         if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX(), (*actIt)->getY() - SPRITE_HEIGHT)){
-                                                cout << "overlaps with an object! cannot drop vaccine down!" << endl;
                                                 canDrop = false;
                                                 break;
                                         }
                                         anotherIt++;
                                     }
                                     if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX(), (*actIt)->getY() - SPRITE_HEIGHT)){
-                                        cout << "overlaps with the Penelope! cannot drop vaccine down!" << endl;
                                         canDrop = false;
                                         break;
                                     }
                                     if(canDrop){
                                         actorList.push_back(new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY() - SPRITE_HEIGHT));
-                                        cout << "dropped goodie down!!" << endl;
                                         break;
                                     }
                                     break;
@@ -427,20 +420,17 @@ void StudentWorld::damageObjects(Actor* flamePtr){//this is for "each" flame!!!
                                     anotherIt = actorList.begin();
                                     while(anotherIt != actorList.end() && (*anotherIt) != nullptr){
                                         if(doesOverlap((*anotherIt)->getX(), (*anotherIt)->getY(), (*actIt)->getX(), (*actIt)->getY() + SPRITE_HEIGHT)){
-                                                cout << "overlaps with an object! cannot drop vaccine up!" << endl;
                                                 canDrop = false;
                                                 break;
                                         }
                                         anotherIt++;
                                     }
                                     if(doesOverlap(playerPtr->getX(), playerPtr->getY(), (*actIt)->getX(), (*actIt)->getY() + SPRITE_HEIGHT)){
-                                        cout << "overlaps with the Penelope! cannot drop vaccine up!" << endl;
                                         canDrop = false;
                                         break;
                                     }
                                     if(canDrop){
                                         actorList.push_back(new VaccineGoodie(this, (*actIt)->getX(), (*actIt)->getY() + SPRITE_HEIGHT));
-                                        cout << "dropped goodie up!!" << endl;
                                         break;
                                     }
                                     break;
@@ -698,7 +688,6 @@ double StudentWorld::determineDistToClosestZombie(double citizenX, double citize
         }
         actIt++;
     }
-//    cout << "minDistance : " << minDistance << endl;
     return minDistance;
 
 }
@@ -725,9 +714,6 @@ bool StudentWorld::findClosestPersonAndFollow(Zombie *zombiePtr){
     }else{
         minDistance = distanceToPenelope;
     }
-//    cout << "distance to citizen : " << static_cast<int>(distanceToCitizen) << endl;
-//    cout << "distance to Penelope : " << static_cast<int>(distanceToPenelope) << endl;
-//    cout << "minDistance : " << static_cast<int>(minDistance) << endl;
 
     if(minDistance > 80){
         return false;
@@ -781,11 +767,9 @@ void StudentWorld::citizenBecomeZombie(Actor *citizenPtr){
     citizenPtr->setIsAlive(false);
     playSound(SOUND_ZOMBIE_BORN);
     if(dumbOrSmart < 8){
-        cout << "citizen become a dumb zombie!" << endl;
         increaseScore(-1000);
         actorList.push_back(new DumbZombie(this, citizenPtr->getX(), citizenPtr->getY()));
     }else{
-        cout << "citizen become a dumb zombie!" << endl;
         increaseScore(-1000);
         actorList.push_back(new SmartZombie(this, citizenPtr->getX(), citizenPtr->getY()));
     }
