@@ -1,3 +1,3 @@
 ### ZombieDash - game_screen
 
-![game_screen](./game_screen.png)
+![game_screen](./zombiedash_screenshot.png)
